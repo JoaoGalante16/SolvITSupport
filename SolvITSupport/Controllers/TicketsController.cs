@@ -330,4 +330,111 @@ public class TicketsController : Controller
         // Após adicionar o comentário, redireciona de volta para a mesma página de detalhes
         return RedirectToAction("Details", new { id = ticketId });
     }
+
+    // Adicione estes dois métodos dentro da sua classe TicketsController
+
+    // GET: /Tickets/Assign/5
+    // Prepara os dados para o modal de atribuição
+    [HttpGet]
+    public async Task<IActionResult> Assign(int id)
+    {
+        var ticket = await _ticketService.GetTicketByIdAsync(id);
+        if (ticket == null) return NotFound();
+
+        var atendentes = await _userManager.GetUsersInRoleAsync("Atendente");
+
+        var viewModel = new AssignTicketViewModel
+        {
+            TicketId = id,
+            Attendants = new SelectList(atendentes, "Id", "NomeCompleto")
+        };
+
+        // Devolve uma PartialView, que é ideal para ser carregada dentro de um modal
+        return PartialView("_AssignTicketPartial", viewModel);
+    }
+
+    // POST: /Tickets/Assign
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Assign(AssignTicketViewModel viewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            var assignerId = _userManager.GetUserId(User);
+            await _ticketService.AssignTicketAsync(viewModel.TicketId, viewModel.AttendantId, assignerId);
+        }
+
+        return RedirectToAction("Details", new { id = viewModel.TicketId });
+    }
+
+    // Adicione estes quatro métodos dentro da sua classe TicketsController
+
+    // GET: /Tickets/ChangeStatus/5
+    [HttpGet]
+    public async Task<IActionResult> ChangeStatus(int id)
+    {
+        var viewModel = new ChangeStatusViewModel
+        {
+            TicketId = id,
+            Statuses = new SelectList(await _statusService.GetAllAsync(), "Id", "Nome")
+        };
+        return PartialView("_ChangeStatusPartial", viewModel);
+    }
+
+    // POST: /Tickets/ChangeStatus
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangeStatus(ChangeStatusViewModel viewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            await _ticketService.ChangeTicketStatusAsync(viewModel.TicketId, viewModel.NewStatusId, _userManager.GetUserId(User));
+        }
+        return RedirectToAction("Details", new { id = viewModel.TicketId });
+    }
+
+    // GET: /Tickets/ChangePriority/5
+    [HttpGet]
+    public async Task<IActionResult> ChangePriority(int id)
+    {
+        var viewModel = new ChangePriorityViewModel
+        {
+            TicketId = id,
+            Priorities = new SelectList(await _priorityService.GetAllAsync(), "Id", "Nome")
+        };
+        return PartialView("_ChangePriorityPartial", viewModel);
+    }
+
+    // POST: /Tickets/ChangePriority
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePriority(ChangePriorityViewModel viewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            await _ticketService.ChangeTicketPriorityAsync(viewModel.TicketId, viewModel.NewPriorityId, _userManager.GetUserId(User));
+        }
+        return RedirectToAction("Details", new { id = viewModel.TicketId });
+    }
+
+    // Adicione este novo método dentro da classe TicketsController
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdatePriority(int ticketId, int priorityId)
+    {
+        try
+        {
+            var userId = _userManager.GetUserId(User);
+            await _ticketService.ChangeTicketPriorityAsync(ticketId, priorityId, userId);
+
+            // Retorna um JSON a indicar que a operação foi bem-sucedida
+            return Json(new { success = true, message = "Prioridade atualizada com sucesso!" });
+        }
+        catch (Exception ex)
+        {
+            // Em caso de erro, retorna uma mensagem de erro
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
 }

@@ -352,3 +352,115 @@ body {
     border-radius: 0.35rem;
     margin-left: 0.5rem;
 }
+
+/* =================================================================
+   ESTILOS PARA A PÁGINA DE DETALHES DO CHAMADO
+   ================================================================= */
+
+.ticket-details-header {
+    margin-bottom: 2rem;
+}
+
+    .ticket-details-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+    }
+
+    .ticket-details-header p {
+        color: #6b7280;
+    }
+
+.details-card,
+.history-card {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+    .details-card .card-header,
+    .history-card .card-header {
+        background-color: #f9fafb;
+        font-weight: 600;
+        padding: 0.75rem 1.25rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+.history-update-card {
+    border: none;
+    box-shadow: none;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+    .history-update-card:last-child {
+        border-bottom: none;
+    }
+
+/* --- Estilos para o Card de Conteúdo Unificado --- */
+
+.content-card-body {
+    padding: 1.5rem;
+}
+
+.content-card-section {
+    margin-bottom: 1.5rem;
+}
+
+    .content-card-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .content-card-section h5 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+/* Estilo para a descrição do problema (texto pré-formatado) */
+.ticket-description {
+    white-space: pre-wrap; /* Mantém as quebras de linha do texto */
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: #374151; /* Cinzento escuro */
+    line-height: 1.6;
+}
+
+/* =================================================================
+   ESTILOS PARA A PÁGINA DE DETALHES (REFINAMENTO)
+   ================================================================= */
+
+.details-card {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+    .details-card .card-header {
+        background-color: #f9fafb; /* Fundo ligeiramente cinzento para o cabeçalho do cartão */
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 0.75rem 1.25rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .details-card .card-body {
+        padding: 1.25rem;
+    }
+
+    .details-card .list-group-item {
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+    }
+
+        .details-card .list-group-item:first-child {
+            border-top: none;
+        }
+
+    .details-card .d-grid .btn {
+        text-align: left; /* Alinha o texto dos botões de Ações à esquerda */
+    }
+
