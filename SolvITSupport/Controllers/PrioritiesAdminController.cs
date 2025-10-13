@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolvITSupport.Data;
 using SolvITSupport.Models;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SolvITSupport.Controllers
@@ -17,36 +18,85 @@ namespace SolvITSupport.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index() => View(await _context.Priorities.ToListAsync());
-        public async Task<IActionResult> Details(int? id) => View(await _context.Priorities.FindAsync(id));
-        public IActionResult Create() => View();
-        public async Task<IActionResult> Edit(int? id) => View(await _context.Priorities.FindAsync(id));
-        public async Task<IActionResult> Delete(int? id) => View(await _context.Priorities.FindAsync(id));
+        // GET: /PrioritiesAdmin
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Priorities.ToListAsync());
+        }
 
+        // GET: /PrioritiesAdmin/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+            var priority = await _context.Priorities.FirstOrDefaultAsync(m => m.Id == id);
+            if (priority == null) return NotFound();
+            return View(priority);
+        }
+
+        // GET: /PrioritiesAdmin/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: /PrioritiesAdmin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Priority priority)
         {
-            _context.Add(priority);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                _context.Add(priority);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(priority);
         }
 
+        // GET: /PrioritiesAdmin/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+            var priority = await _context.Priorities.FindAsync(id);
+            if (priority == null) return NotFound();
+            return View(priority);
+        }
+
+        // POST: /PrioritiesAdmin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Priority priority)
         {
-            _context.Update(priority);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (id != priority.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(priority);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(priority);
         }
 
+        // GET: /PrioritiesAdmin/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+            var priority = await _context.Priorities.FirstOrDefaultAsync(m => m.Id == id);
+            if (priority == null) return NotFound();
+            return View(priority);
+        }
+
+        // POST: /PrioritiesAdmin/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var priority = await _context.Priorities.FindAsync(id);
-            _context.Priorities.Remove(priority);
+            if (priority != null)
+            {
+                _context.Priorities.Remove(priority);
+            }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

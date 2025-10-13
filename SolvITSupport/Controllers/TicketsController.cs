@@ -1,58 +1,102 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity; // <-- ADICIONE ESTA LINHA
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Identity; // <-- ADICIONE ESTA LINHA
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SolvITSupport.Data;
 using SolvITSupport.Models;
 using SolvITSupport.Services;
-using Microsoft.EntityFrameworkCore;
-
+using System.Linq;
 [Authorize]
 public class TicketsController : Controller
 {
+    // Adicione os campos para todos os serviços que o controller usa
     private readonly ITicketService _ticketService;
     private readonly ICategoryService _categoryService;
     private readonly IPriorityService _priorityService;
     private readonly IStatusService _statusService;
-    private readonly UserManager<ApplicationUser> _userManager; // <-- ADICIONE ESTA LINHA
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ApplicationDbContext _context; // <-- ADICIONE ESTA LINHA
 
-    // Atualize o construtor para receber o UserManager
+    // Altere o construtor para receber também o ApplicationDbContext
     public TicketsController(
         ITicketService ticketService,
         ICategoryService categoryService,
         IPriorityService priorityService,
         IStatusService statusService,
-        UserManager<ApplicationUser> userManager) // <-- ADICIONE ESTE PARÂMETRO
+        UserManager<ApplicationUser> userManager,
+        ApplicationDbContext context) // <-- ADICIONE ESTE PARÂMETRO
     {
         _ticketService = ticketService;
         _categoryService = categoryService;
         _priorityService = priorityService;
         _statusService = statusService;
-        _userManager = userManager; // <-- ADICIONE ESTA LINHA
+        _userManager = userManager;
+        _context = context; // <-- ADICIONE ESTA LINHA
     }
 
-    public async Task<IActionResult> Index()
+
+    // Substitua o seu método Index() por este
+    public async Task<IActionResult> Index(int? categoryIdFilter, int? priorityIdFilter, int? statusIdFilter, string searchString)
     {
-        // Pega o ID do utilizador que tem a sessão iniciada
+        // Vai buscar todos os chamados que o utilizador tem permissão para ver
+        IQueryable<Ticket> ticketsQuery;
         var currentUserId = _userManager.GetUserId(User);
 
-        IEnumerable<Ticket> tickets;
-
-        // Verifica se o utilizador tem o papel de "Atendente" ou "Administrador"
         if (User.IsInRole("Atendente") || User.IsInRole("Administrador"))
         {
-            // Se for, vai buscar TODOS os chamados
-            tickets = await _ticketService.GetAllTicketsAsync();
+            ticketsQuery = _context.Tickets.AsQueryable();
         }
         else
         {
-            // Se for um utilizador normal, vai buscar APENAS os seus próprios chamados
-            tickets = await _ticketService.GetTicketsByUserAsync(currentUserId);
+            ticketsQuery = _context.Tickets.Where(t => t.SolicitanteId == currentUserId);
         }
 
-        // Envia a lista correta (filtrada ou não) para a View
-        return View(tickets);
-    }
+        // --- INÍCIO DA CORREÇÃO ---
+        // Aplica o filtro de pesquisa de texto, se existir
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            // Pesquisa no Título E também no Código (convertendo o ID para string no lado do C# primeiro)
+            ticketsQuery = ticketsQuery.Where(t => t.Titulo.Contains(searchString) || ("TK-" + t.Id.ToString()).Contains(searchString));
+        }
+        // --- FIM DA CORREÇÃO ---
 
+
+        // Aplica os filtros dos dropdowns, se existirem
+        if (categoryIdFilter.HasValue)
+        {
+            ticketsQuery = ticketsQuery.Where(t => t.CategoriaId == categoryIdFilter.Value);
+        }
+        if (priorityIdFilter.HasValue)
+        {
+            ticketsQuery = ticketsQuery.Where(t => t.PrioridadeId == priorityIdFilter.Value);
+        }
+        if (statusIdFilter.HasValue)
+        {
+            ticketsQuery = ticketsQuery.Where(t => t.StatusId == statusIdFilter.Value);
+        }
+
+        // Executa a consulta na base de dados
+        var filteredTickets = await ticketsQuery
+            .Include(t => t.Categoria)
+            .Include(t => t.Prioridade)
+            .Include(t => t.Status)
+            .OrderByDescending(t => t.DataCriacao)
+            .ToListAsync();
+
+        // (O resto do seu código para criar o ViewModel continua igual...)
+        var viewModel = new TicketIndexViewModel
+        {
+            Tickets = filteredTickets,
+            Categories = new SelectList(await _categoryService.GetAllAsync(), "Id", "Nome", categoryIdFilter),
+            Priorities = new SelectList(await _priorityService.GetAllAsync(), "Id", "Nome", priorityIdFilter),
+            Statuses = new SelectList(await _statusService.GetAllAsync(), "Id", "Nome", statusIdFilter),
+            SearchString = searchString
+        };
+
+        return View(viewModel);
+    }
     // Adicione estes dois métodos dentro da classe TicketsController
 
     // GET: /Tickets/Edit/5

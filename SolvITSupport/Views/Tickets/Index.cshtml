@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SolvITSupport.Models.Ticket>
+﻿@model SolvITSupport.Models.TicketIndexViewModel
 
 @{
     ViewData["Title"] = "Meus Chamados";
@@ -10,9 +10,7 @@
         <p>Visualize e gerencie todos os seus chamados de suporte</p>
     </div>
     <div>
-        <a asp-controller="Tickets" asp-action="Create" class="btn btn-primary d-flex align-items-center">
-            <i class="fas fa-plus-circle me-2"></i> Abrir Novo Chamado
-        </a>
+        <a asp-controller="Tickets" asp-action="Create" class="btn btn-primary">Novo Chamado</a>
     </div>
 </div>
 
@@ -20,39 +18,126 @@
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="stats-card h-100">
             <div class="stats-card-title">TOTAL</div>
-            <div class="stats-card-value">@Model.Count()</div>
+            <div class="stats-card-value">@Model.Tickets.Count()</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="stats-card h-100">
             <div class="stats-card-title">ABERTOS</div>
-            <div class="stats-card-value text-warning">@Model.Count(t => t.Status.Nome == "Aberto")</div>
+            <div class="stats-card-value text-warning">@Model.Tickets.Count(t => t.Status.Nome == "Aberto")</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="stats-card h-100">
             <div class="stats-card-title">EM ANDAMENTO</div>
-            <div class="stats-card-value text-info">@Model.Count(t => t.Status.Nome == "Em Andamento")</div>
+            <div class="stats-card-value text-info">@Model.Tickets.Count(t => t.Status.Nome == "Em Andamento")</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="stats-card h-100">
             <div class="stats-card-title">RESOLVIDOS</div>
-            <div class="stats-card-value text-success">@Model.Count(t => t.Status.Tipo == "Resolvido")</div>
+            <div class="stats-card-value text-success">@Model.Tickets.Count(t => t.Status.Tipo == "Resolvido")</div>
         </div>
     </div>
 </div>
-<div class="filters-card mb-4">
+<div class="card shadow mb-4">
+    <div class="card-header">
+        <h6 class="m-0 font-weight-bold">Filtros e Pesquisa</h6>
+    </div>
     <div class="card-body">
-        <input type="text" class="form-control" placeholder="Pesquisar por título ou ID do chamado..." />
+        <form asp-action="Index" method="get">
+            <div class="row g-3 align-items-end">
+                <div class="col-lg-12 mb-2">
+                    <input type="text" name="searchString" class="form-control" placeholder="Pesquisar por título ou ID do chamado..." value="@Model.SearchString" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="statusIdFilter" asp-items="@Model.Statuses" class="form-control">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Prioridade</label>
+                    <select name="priorityIdFilter" asp-items="@Model.Priorities" class="form-control">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Categoria</label>
+                    <select name="categoryIdFilter" asp-items="@Model.Categories" class="form-control">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
-
-<div class="tickets-table-card">
-    <div class="card-body">
-        <table class="table table-hover align-middle">
+<div class="card shadow">
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Categoria</th>
+                    <th>Prioridade</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                    <th class="actions-column">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Tickets)
+                {
+                    <tr>
+                        <td>@item.Codigo</td>
+                        <td>@item.Titulo</td>
+                        <td>@item.Categoria?.Nome</td>
+                        <td>
+                            @{
+                                var priorityClass = "badge-prioridade-baixa"; // Cor padrão
+                                switch (item.Prioridade?.Nome)
+                                {
+                                    case "Alta":
+                                        priorityClass = "badge-prioridade-alta";
+                                        break;
+                                    case "Média":
+                                        priorityClass = "badge-prioridade-media";
+                                        break;
+                                }
+                            }
+                            <span class="badge-status @priorityClass">@item.Prioridade?.Nome</span>
+                        </td>
+                        <td>
+                            @{
+                                var statusClass = "badge-status-fechado"; // Cor padrão
+                                switch (item.Status?.Nome)
+                                {
+                                    case "Aberto":
+                                        statusClass = "badge-status-aberto";
+                                        break;
+                                    case "Em Andamento":
+                                        statusClass = "badge-status-andamento";
+                                        break;
+                                }
+                            }
+                            <span class="badge-status @statusClass">@item.Status?.Nome</span>
+                        </td>
+                        <td>@item.DataCriacao.ToString("dd/MM/yyyy")</td>
+                        <td class="actions-column">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-details">Ver detalhes</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
         </table>
+    </div>
+    <div class="pagination-footer">
+        <span>Mostrando @Model.Tickets.Count() chamados</span>
     </div>
 </div>
 

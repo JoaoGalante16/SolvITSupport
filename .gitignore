@@ -1,12 +1,12 @@
 # Pasta de configurações do Visual Studio
 **/.vs/
 
+# Pastas de compilação (Build)
+**/[Bb]in/
+**/[Oo]bj/
+
 # Arquivos de usuário e cache
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
-
-# Pastas de compilação (Build)
-**/[Bb]in/
-**/[Oo]bj/
