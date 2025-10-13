@@ -1,0 +1,45 @@
+﻿@model ApplicationUser
+
+@{
+    ViewData["Title"] = "Detalhes do Utilizador";
+    Layout = "_DashboardLayout";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <h4>Utilizador: @Model.NomeCompleto</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Nome Completo</dt>
+        <dd class="col-sm-9">@Model.NomeCompleto</dd>
+
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+
+        <dt class="col-sm-3">Cargo</dt>
+        <dd class="col-sm-9">@Model.Cargo</dd>
+
+        <dt class="col-sm-3">Departamento</dt>
+        <dd class="col-sm-9">@Model.Departamento</dd>
+
+        <dt class="col-sm-3">Ativo</dt>
+        <dd class="col-sm-9">@(Model.Ativo ? "Sim" : "Não")</dd>
+
+        <dt class="col-sm-3">Papéis (Roles)</dt>
+        <dd class="col-sm-9">
+            @if (ViewBag.UserRoles != null && ViewBag.UserRoles.Count > 0)
+            {
+                @string.Join(", ", ViewBag.UserRoles)
+            }
+            else
+            {
+                <span>Nenhum papel atribuído.</span>
+            }
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
+    <a asp-action="Users" class="btn btn-secondary">Voltar para a Lista</a>
+</div>

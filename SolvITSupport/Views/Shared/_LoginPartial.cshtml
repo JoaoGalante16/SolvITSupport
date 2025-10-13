@@ -1,0 +1,35 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+
+<ul class="navbar-nav flex-row align-items-center">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item me-3">
+            <a class="nav-link notification-bell" href="#" title="Notificações">
+                <i class="fas fa-bell"></i>
+                <span class="notification-dot"></span>
+            </a>
+        </li>
+
+        <li class="nav-item dropdown">
+            <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-circle"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><h6 class="dropdown-header">Minha Conta</h6></li>
+                <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Perfil</a></li>
+                <li><a class="dropdown-item" asp-controller="Manage" asp-action="Index">Configurações</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="dropdown-item">Sair</button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        // Links de Registar e Entrar, se o utilizador não estiver autenticado
+    }
+</ul>

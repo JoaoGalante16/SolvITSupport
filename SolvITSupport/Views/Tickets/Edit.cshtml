@@ -1,0 +1,51 @@
+﻿@model SolvITSupport.Models.EditTicketViewModel
+
+@{
+    ViewData["Title"] = "Editar Chamado";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>Chamado: @Model.Titulo</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Titulo" class="form-label"></label>
+                <input asp-for="Titulo" class="form-control" />
+                <span asp-validation-for="Titulo" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Descricao" class="form-label"></label>
+                <textarea asp-for="Descricao" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Descricao" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="CategoriaId" class="form-label"></label>
+                    <select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.CategoriaId"></select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="PrioridadeId" class="form-label"></label>
+                    <select asp-for="PrioridadeId" class="form-control" asp-items="ViewBag.PrioridadeId"></select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="StatusId" class="form-label"></label>
+                    <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <input type="submit" value="Salvar Alterações" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

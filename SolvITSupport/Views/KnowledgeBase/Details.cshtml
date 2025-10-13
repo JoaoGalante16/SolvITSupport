@@ -1,0 +1,16 @@
+﻿@model SolvITSupport.Models.KnowledgeBaseArticle
+@{
+    ViewData["Title"] = Model.Titulo;
+    Layout = "_DashboardLayout";
+}
+
+<h1>@Model.Titulo</h1>
+<p class="text-muted">Categoria: @Model.Categoria | Última atualização: @Model.UltimaAtualizacao.ToShortDateString()</p>
+<hr />
+
+<div class="mt-4">
+    <pre style="white-space: pre-wrap; font-family: inherit; font-size: inherit;">@Model.Conteudo</pre>
+</div>
+
+<hr />
+<a asp-action="Index" class="btn btn-primary">Voltar para a Lista</a>

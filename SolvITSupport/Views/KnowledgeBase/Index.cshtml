@@ -1,0 +1,22 @@
+﻿@model IEnumerable<SolvITSupport.Models.KnowledgeBaseArticle>
+@{
+    ViewData["Title"] = "Base de Conhecimento";
+    Layout = "_DashboardLayout";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>Encontre soluções para problemas comuns e tutoriais.</p>
+
+<div class="list-group">
+    @foreach (var article in Model)
+    {
+        <a asp-action="Details" asp-route-id="@article.Id" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">@article.Titulo</h5>
+                <small>@article.UltimaAtualizacao.ToShortDateString()</small>
+            </div>
+            <p class="mb-1">@article.Descricao</p>
+            <small>Categoria: @article.Categoria</small>
+        </a>
+    }
+</div>

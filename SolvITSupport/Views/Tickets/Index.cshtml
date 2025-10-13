@@ -1,0 +1,62 @@
+﻿@model IEnumerable<SolvITSupport.Models.Ticket>
+
+@{
+    ViewData["Title"] = "Meus Chamados";
+}
+
+<div class="page-header">
+    <div class="page-header-title">
+        <h1>Meus Chamados</h1>
+        <p>Visualize e gerencie todos os seus chamados de suporte</p>
+    </div>
+    <div>
+        <a asp-controller="Tickets" asp-action="Create" class="btn btn-primary d-flex align-items-center">
+            <i class="fas fa-plus-circle me-2"></i> Abrir Novo Chamado
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card h-100">
+            <div class="stats-card-title">TOTAL</div>
+            <div class="stats-card-value">@Model.Count()</div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card h-100">
+            <div class="stats-card-title">ABERTOS</div>
+            <div class="stats-card-value text-warning">@Model.Count(t => t.Status.Nome == "Aberto")</div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card h-100">
+            <div class="stats-card-title">EM ANDAMENTO</div>
+            <div class="stats-card-value text-info">@Model.Count(t => t.Status.Nome == "Em Andamento")</div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card h-100">
+            <div class="stats-card-title">RESOLVIDOS</div>
+            <div class="stats-card-value text-success">@Model.Count(t => t.Status.Tipo == "Resolvido")</div>
+        </div>
+    </div>
+</div>
+<div class="filters-card mb-4">
+    <div class="card-body">
+        <input type="text" class="form-control" placeholder="Pesquisar por título ou ID do chamado..." />
+    </div>
+</div>
+
+
+<div class="tickets-table-card">
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+        </table>
+    </div>
+</div>
+
+
+@section Scripts {
+    <link rel="stylesheet" href="~/css/tickets.css" asp-append-version="true" />
+}

@@ -1,0 +1,354 @@
+﻿/* ==============================================
+   ESTILOS GERAIS
+   ============================================== */
+body {
+    background-color: #f9fafb;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ==============================================
+   LAYOUT PRINCIPAL
+   ============================================== */
+.main-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    min-width: 260px;
+    background-color: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding: 0 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+    .sidebar-header .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0d9488;
+    }
+
+.sidebar-nav {
+    flex-grow: 1;
+    list-style: none;
+    margin: 0;
+    padding: 1rem 0.75rem 0;
+}
+
+.sidebar-item a {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.25rem;
+    color: #374151;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+    .sidebar-item a:hover {
+        background-color: #f3f4f6;
+    }
+
+.sidebar-item.active a {
+    background-color: #e6f7ff;
+    color: #0d9488;
+    font-weight: 600;
+}
+
+.sidebar-footer .btn-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: 0.5rem;
+}
+
+    .sidebar-footer .btn-link:hover {
+        background-color: #f8d7da;
+    }
+
+.main-content {
+    flex-grow: 1;
+    margin-left: 260px; /* largura da sidebar */
+    padding: 2.5rem;
+    overflow-y: auto;
+}
+
+/* ==============================================
+   HEADER SUPERIOR
+   ============================================== */
+.header-navbar {
+    display: flex;
+    align-items: center;
+    height: 70px;
+    min-height: 70px;
+    padding: 0 2.5rem;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+    .header-navbar .navbar-nav .nav-link {
+        color: #6b7280;
+        font-size: 1.25rem;
+    }
+
+.notification-bell {
+    position: relative;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border: 1.5px solid #fff;
+    border-radius: 50%;
+}
+
+/* Menu do usuário (dropdown) */
+.header-navbar .dropdown-toggle::after {
+    display: none;
+}
+
+.header-navbar .dropdown-menu {
+    margin-top: 0.5rem !important;
+    padding: 0.5rem 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+}
+
+.header-navbar .dropdown-item {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+}
+
+.header-navbar .dropdown-header {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6c757d;
+}
+
+/* ==============================================
+   PAGE HEADER
+   ============================================== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header-title h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+}
+
+.page-header-title p {
+    margin-top: 0.25rem;
+    color: #6b7280;
+}
+
+/* ==============================================
+   BOTÕES
+   ============================================== */
+.btn-primary {
+    background-color: #0d9488;
+    border-color: #0d9488;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+    .btn-primary:hover {
+        background-color: #0f766e;
+        border-color: #0f766e;
+    }
+
+.btn-outline-primary,
+.btn-details {
+    color: #0d9488;
+    border: 1px solid #0d9488;
+}
+
+    .btn-outline-primary:hover,
+    .btn-details:hover {
+        color: #ffffff;
+        background-color: #0d9488;
+        border-color: #0d9488;
+    }
+
+.btn-details {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 0.35rem;
+    text-align: right;
+    text-decoration: none;
+}
+
+/* ==============================================
+   CARDS DE ESTATÍSTICA
+   ============================================== */
+.stats-card {
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+}
+
+.stats-card-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.stats-card-value {
+    margin-top: 0.5rem;
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+    .stats-card-value.text-warning {
+        color: #f59e0b !important;
+    }
+
+    .stats-card-value.text-success {
+        color: #10b981 !important;
+    }
+
+    .stats-card-value.text-info {
+        color: #003e99 !important;
+    }
+
+.stats-card-description {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+/* ==============================================
+   TABELAS E AÇÕES
+   ============================================== */
+.table th.actions-column,
+.table td.actions-column {
+    text-align: right;
+}
+
+/* ==============================================
+   BADGES (ETIQUETAS)
+   ============================================== */
+.badge-status {
+    display: inline-block;
+    padding: .35em .65em;
+    font-size: .75em;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+}
+
+.badge-prioridade-alta {
+    color: #721c24;
+    background-color: #f8d7da;
+}
+
+.badge-prioridade-media {
+    color: #856404;
+    background-color: #fff3cd;
+}
+
+.badge-prioridade-baixa {
+    color: #0c5460;
+    background-color: #d1ecf1;
+}
+
+.badge-status-aberto {
+    color: #856404;
+    background-color: #fff3cd;
+}
+
+.badge-status-andamento {
+    color: #004085;
+    background-color: #cce5ff;
+}
+
+.badge-status-resolvido,
+.badge-status-fechado {
+    color: #155724;
+    background-color: #d4edda;
+}
+
+/* ==============================================
+   ABAS (TABS) EM CARD HEADER
+   ============================================== */
+.card-header-tabs {
+    margin-bottom: -0.75rem; /* integra com o cabeçalho do card */
+    border-bottom: none; /* remove linha padrão do Bootstrap */
+}
+
+    .card-header-tabs .nav-link {
+        border: none;
+        color: #6b7280;
+        font-weight: 500;
+        padding: 0.75rem 0.25rem;
+        margin-right: 1.5rem;
+    }
+
+        .card-header-tabs .nav-link.active {
+            color: #0d9488;
+            background-color: transparent;
+            border-bottom: 2px solid #0d9488;
+        }
+
+        .card-header-tabs .nav-link:hover {
+            color: #111827;
+            border-bottom-color: transparent;
+        }
+
+/* ==============================================
+   LOGOTIPO / BRAND
+   ============================================== */
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-main-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0d9488; /* tom teal */
+}
+
+.logo-tag {
+    background-color: #0d9488;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.35rem;
+    margin-left: 0.5rem;
+}

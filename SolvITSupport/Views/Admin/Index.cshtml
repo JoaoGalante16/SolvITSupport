@@ -1,0 +1,14 @@
+﻿@{
+	ViewData["Title"] = "Painel de Administração";
+	Layout = "_DashboardLayout";
+}
+<h1>@ViewData["Title"]</h1>
+<p>Bem-vindo à área de gestão do sistema.</p>
+<hr />
+
+<div class="list-group">
+    <a asp-action="Users" class="list-group-item list-group-item-action">Gerir Utilizadores</a>
+    <a asp-controller="CategoriesAdmin" asp-action="Index" class="list-group-item list-group-item-action">Gerir Categorias</a>
+    <a asp-controller="PrioritiesAdmin" asp-action="Index" class="list-group-item list-group-item-action">Gerir Prioridades</a> 
+    <a asp-controller="StatusAdmin" asp-action="Index" class="list-group-item list-group-item-action">Gerir Status</a>
+</div>

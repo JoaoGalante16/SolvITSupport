@@ -1,0 +1,74 @@
+﻿@model SolvITSupport.Models.ReportViewModel
+@{
+    ViewData["Title"] = "Relatórios";
+    Layout = "_DashboardLayout";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>Visualize métricas e estatísticas do sistema de suporte.</p>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Chamados por Categoria</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Chamados por Status</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Gráfico de Categorias (Gráfico de Pizza)
+            var categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'pie',
+                data: {
+                    labels: @Html.Raw(Json.Serialize(Model.TicketsByCategory.Labels)),
+                    datasets: [{
+                        label: 'Chamados',
+                        data: @Html.Raw(Json.Serialize(Model.TicketsByCategory.Data)),
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
+                    }]
+                }
+            });
+
+            // Gráfico de Status (Gráfico de Barras)
+            var statusCtx = document.getElementById('statusChart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(Json.Serialize(Model.TicketsByStatus.Labels)),
+                    datasets: [{
+                        label: 'Total de Chamados',
+                        data: @Html.Raw(Json.Serialize(Model.TicketsByStatus.Data)),
+                        backgroundColor: '#4e73df'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}
