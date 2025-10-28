@@ -20,6 +20,7 @@ namespace SolvITSupport.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<KnowledgeBaseArticle> KnowledgeBaseArticles { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -33,6 +34,7 @@ namespace SolvITSupport.Data
             builder.Entity<TicketUpdate>().ToTable("TicketUpdates");
             builder.Entity<Attachment>().ToTable("Attachments");
             builder.Entity<Notification>().ToTable("Notifications");
+            builder.Entity<KnowledgeBaseArticle>().ToTable("BaseConhecimento");
 
             // --- O resto do código continua igual ---
 

@@ -1,0 +1,32 @@
+﻿/* * CSS para a página da Base de Conhecimento (knowledge-base.css) 
+ */
+
+/* Efeitos de hover nos cards de tópico */
+.topic-card {
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+    .topic-card:hover {
+        transform: translateY(-5px);
+        /* Sombra sutil idêntica à do print */
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    }
+
+/* Efeitos de hover nos cards de artigo */
+.article-card {
+    transition: all 0.2s ease-in-out;
+}
+
+    .article-card:hover {
+        /* Destaque azul na lateral */
+        border-left: 4px solid #0d6efd !important;
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    }
+
+/* Estilo das abas de filtro (Pills) */
+.nav-pills .nav-link.active {
+    /* Cor verde principal do seu tema (SolvIT) */
+    background-color: #198754;
+    color: white !important;
+}

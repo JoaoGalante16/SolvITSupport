@@ -1,22 +1,147 @@
-﻿@model IEnumerable<SolvITSupport.Models.KnowledgeBaseArticle>
+﻿@model SolvITSupport.Models.KnowledgeBaseViewModel
+
 @{
     ViewData["Title"] = "Base de Conhecimento";
     Layout = "_DashboardLayout";
 }
 
-<h1>@ViewData["Title"]</h1>
-<p>Encontre soluções para problemas comuns e tutoriais.</p>
+@section Styles {
+    <link rel="stylesheet" href="~/css/knowledge-base.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+}
 
-<div class="list-group">
-    @foreach (var article in Model)
+<div class="container-fluid p-4">
+    <div class="mb-4">
+        <h1 class="h3 fw-bold text-dark">Base de Conhecimento</h1>
+        <p class="text-muted">Encontre soluções para problemas comuns e tutoriais.</p>
+    </div>
+
+    <div class="card mb-5 border-0 shadow-sm" style="border-radius: 10px;">
+        <div class="card-body p-2">
+            <form asp-action="Index" method="get" class="d-flex align-items-center">
+                <i class="fas fa-search text-muted ms-3 me-3"></i>
+                <input type="text" name="searchString" class="form-control border-0 shadow-none"
+                       placeholder="Pesquisar na base de conhecimento..."
+                       value="@Model.CurrentSearchString" style="font-size: 1.1rem;">
+
+                @if (!string.IsNullOrEmpty(Model.CurrentCategoryName))
+                {
+                    <input type="hidden" name="categoryName" value="@Model.CurrentCategoryName" />
+                }
+            </form>
+        </div>
+    </div>
+
+    @if (Model.PopularTopics != null && Model.PopularTopics.Any() && string.IsNullOrEmpty(Model.CurrentSearchString))
     {
-        <a asp-action="Details" asp-route-id="@article.Id" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">@article.Titulo</h5>
-                <small>@article.UltimaAtualizacao.ToShortDateString()</small>
+        <h5 class="fw-bold mb-3">Tópicos Populares</h5>
+        <div class="row g-3 mb-5">
+            @foreach (var topic in Model.PopularTopics)
+            {
+                <div class="col-md-4 col-lg-2">
+                    <a asp-action="Index" asp-route-categoryName="@topic.Name" class="text-decoration-none">
+                        <div class="card h-100 border-0 shadow-sm text-center py-4 topic-card">
+                            <div class="card-body">
+                                <i class="fas @topic.Icon fa-2x mb-3" style="color: #333;"></i>
+                                <h6 class="fw-bold text-dark mb-1">@topic.Name</h6>
+                                <small class="text-muted">@topic.ArticleCount artigos</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="mb-4">
+        <ul class="nav nav-pills" id="kb-filters">
+            <li class="nav-item">
+                <a asp-action="Index" asp-route-categoryName=""
+                   class="nav-link @(string.IsNullOrEmpty(Model.CurrentCategoryName) ? "active" : "text-muted bg-light") me-2 rounded-pill fw-bold px-4">
+                    Todos
+                </a>
+            </li>
+            @foreach (var cat in Model.Categories)
+            {
+                <li class="nav-item">
+                    <a asp-action="Index" asp-route-categoryName="@cat.Nome"
+                       class="nav-link @(Model.CurrentCategoryName == cat.Nome ? "active" : "text-muted bg-light") me-2 rounded-pill fw-bold px-4">
+                        @cat.Nome
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="row g-3 mb-5">
+        @if (Model.Articles.Count == 0)
+        {
+            <div class="col-12 text-center py-5 text-muted">
+                <i class="fas fa-folder-open fa-3x mb-3"></i>
+                <p>Nenhum artigo encontrado com estes filtros.</p>
             </div>
-            <p class="mb-1">@article.Descricao</p>
-            <small>Categoria: @article.Categoria</small>
-        </a>
+        }
+
+        @foreach (var item in Model.Articles)
+        {
+            <div class="col-12">
+                <div class="card border-0 shadow-sm article-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title fw-bold mb-2">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="text-dark text-decoration-none stretched-link">@item.Titulo</a>
+                            </h5>
+                            @if (!string.IsNullOrEmpty(item.Categoria))
+                            {
+                                <span class="badge bg-light text-dark border rounded-pill px-3">@item.Categoria</span>
+                            }
+                        </div>
+
+                        <p class="card-text text-muted mb-3">
+                            @(item.Descricao.Length > 200 ? item.Descricao.Substring(0, 200) + "..." : item.Descricao)
+                        </p>
+
+                        @if (!string.IsNullOrEmpty(item.Tags))
+                        {
+                            <div class="mb-3">
+                                @foreach (var tag in item.Tags.Split(','))
+                                {
+                                    <span class="badge bg-light text-secondary me-1">@tag.Trim()</span>
+                                }
+                            </div>
+                        }
+
+                        <div class="d-flex align-items.center text-muted small">
+                            <span class="me-4"><i class="far fa-eye me-1"></i> @item.Visualizacoes visualizações</span>
+                            <span class="me-4"><i class="far fa-thumbs-up me-1"></i> @item.VotosUteis acharam útil</span>
+                            <span><i class="far fa-clock me-1"></i> Atualizado em @item.DataAtualizacao.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (string.IsNullOrEmpty(Model.CurrentSearchString) && string.IsNullOrEmpty(Model.CurrentCategoryName))
+    {
+        <div class="card border-0 shadow-sm mt-5 bg-light">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Estatísticas da Base de Conhecimento</h5>
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h2 class="fw-bold text-success">@Model.TotalArticles</h2>
+                        <p class="text-muted">Total de Artigos</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h2 class="fw-bold text-primary">@Model.TotalViews.ToString("N0")</h2>
+                        <p class="text-muted">Total de Visualizações</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h2 class="fw-bold text-info">@Model.ResolutionRate%</h2>
+                        <p class="text-muted">Taxa de resolução</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 </div>
