@@ -4,71 +4,268 @@
     Layout = "_DashboardLayout";
 }
 
-<h1>@ViewData["Title"]</h1>
-<p>Visualize métricas e estatísticas do sistema de suporte.</p>
+@section Styles {
+    <link rel="stylesheet" href="~/css/reports.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+}
 
-<div class="row">
-    <div class="col-lg-6">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Chamados por Categoria</h6>
-            </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold text-dark">Relatórios</h1>
+        <p class="text-muted">Visualize métricas e estatísticas do sistema de suporte.</p>
+    </div>
+    <a href="#" class="btn btn-success" style="background-color: #198754; border-color: #198754;">
+        <i class="fas fa-download me-2"></i> Exportar Relatório
+    </a>
+</div>
+
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-body d-flex flex-wrap gap-3">
+        <div class="flex-grow-1" style="min-width: 150px;">
+            <label for="periodo" class="form-label small text-muted">Período</label>
+            <select id="periodo" class="form-select">
+                <option selected>Últimos 90 dias</option>
+                <option>Últimos 30 dias</option>
+                <option>Últimos 7 dias</option>
+            </select>
+        </div>
+        <div class="flex-grow-1" style="min-width: 150px;">
+            <label for="tipo" class="form-label small text-muted">Tipo de Relatório</label>
+            <select id="tipo" class="form-select">
+                <option selected>Geral</option>
+                <option>Por Equipe</option>
+            </select>
+        </div>
+        <div class="flex-grow-1" style="min-width: 150px;">
+            <label for="formato" class="form-label small text-muted">Formato de Exportação</label>
+            <select id="formato" class="form-select">
+                <option selected>PDF</option>
+                <option>Excel (CSV)</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100 kpi-card">
             <div class="card-body">
-                <canvas id="categoryChart"></canvas>
+                <span class="text-muted">Chamados Totais</span>
+                <i class="fas fa-ticket-alt kpi-icon"></i>
+                <h2 class="fw-bold my-2">@Model.KpiChamadosTotais</h2>
+                <small class="text-success">+2.5% em relação ao período anterior</small>
             </div>
         </div>
     </div>
-    <div class="col-lg-6">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Chamados por Status</h6>
-            </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100 kpi-card">
             <div class="card-body">
-                <canvas id="statusChart"></canvas>
+                <span class="text-muted">Taxa de Resolução</span>
+                <i class="fas fa-check-circle kpi-icon"></i>
+                <h2 class="fw-bold my-2">@Model.KpiTaxaResolucao%</h2>
+                <small class="text-danger">-1.2% em relação ao período anterior</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100 kpi-card">
+            <div class="card-body">
+                <span class="text-muted">Tempo Médio de Resposta</span>
+                <i class="fas fa-clock kpi-icon"></i>
+                <h2 class="fw-bold my-2">@Model.KpiTempoMedioRespostaHoras.ToString("F1")h</h2>
+                <small class="text-success">+0.5h em relação ao período anterior</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100 kpi-card">
+            <div class="card-body">
+                <span class="text-muted">Satisfação do Cliente</span>
+                <i class="fas fa-star kpi-icon"></i>
+                <h2 class="fw-bold my-2">@Model.KpiSatisfacaoCliente.ToString("F1")/5.0</h2>
+                <small class="text-success">+0.1 em relação ao período anterior</small>
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
+<ul class="nav nav-tabs mb-4" id="reportTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="visao-geral-tab" data-bs-toggle="tab" data-bs-target="#visao-geral" type="button" role="tab" aria-controls="visao-geral" aria-selected="true">Visão Geral</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="por-categoria-tab" data-bs-toggle="tab" data-bs-target="#por-categoria" type="button" role="tab" aria-controls="por-categoria" aria-selected="false">Por Categoria</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="reportTabsContent">
+
+    <div class="tab-pane fade show active" id="visao-geral" role="tabpanel" aria-labelledby="visao-geral-tab">
+        
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="m-0 fw-bold text-dark">Chamados por Mês</h6>
+                <small class="text-muted">Comparativo de chamados totais, resolvidos e em aberto</small>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h6 class="m-0 fw-bold text-dark">Distribuição por Categoria</h6>
+                        <small class="text-muted">Percentual de chamados por categoria</small>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoryDonutChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h6 class="m-0 fw-bold text-dark">Problemas Mais Comuns</h6>
+                        <small class="text-muted">Top 5 tipos de chamados mais frequentes</small>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush" id="problemasComunsList">
+                            @foreach (var item in Model.ProblemasMaisComuns)
+                            {
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="fw-bold text-dark">@item.Titulo</span>
+                                        <span class="text-muted small">@item.Resolvidos / @item.Total resolvidos</span>
+                                    </div>
+                                    <div class="progress">
+                                        @{ var percResolvidos = (item.Total > 0) ? ((double)item.Resolvidos / item.Total * 100) : 0; }
+                                        <div class="progress-bar" role="progressbar" style="width: @percResolvidos%;" aria-valuenow="@percResolvidos" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <div class="tab-pane fade" id="por-categoria" role="tabpanel" aria-labelledby="por-categoria-tab">
+        <div class="row g-4">
+            
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h6 class="m-0 fw-bold text-dark">Chamados por Prioridade</h6>
+                        <small class="text-muted">Distribuição de chamados por nível de prioridade</small>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="priorityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h6 class="m-0 fw-bold text-dark">Detalhamento por Categoria</h6>
+                        <small class="text-muted">Estatísticas detalhadas de cada categoria</small>
+                    </div>
+                    <div class="card-body category-detail-list">
+                        <ul class="list-group list-group-flush">
+                            @{ var maxCount = Model.DetalhamentoPorCategoria.Any() ? Model.DetalhamentoPorCategoria.Max(c => c.Count) : 1; }
+                            @foreach (var item in Model.DetalhamentoPorCategoria)
+                            {
+                                <li class="list-group-item mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="fw-bold text-dark">@item.CategoryName</span>
+                                        <span class="text-muted small">@item.Count chamados</span>
+                                    </div>
+                                    <div class="category-bar-container">
+                                        @{ var barWidth = (double)item.Count / maxCount * 100; }
+                                        <div class="category-bar" style="width: @barWidth%; background-color: @item.ColorHex;"></div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div> 
+    
+    @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Gráfico de Categorias (Gráfico de Pizza)
-            var categoryCtx = document.getElementById('categoryChart').getContext('2d');
-            new Chart(categoryCtx, {
-                type: 'pie',
+            
+            // --- Gráficos da Aba "Visão Geral" (Carregam Imediatamente) ---
+            
+            var monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+            new Chart(monthlyCtx, {
+                type: 'bar',
                 data: {
-                    labels: @Html.Raw(Json.Serialize(Model.TicketsByCategory.Labels)),
-                    datasets: [{
-                        label: 'Chamados',
-                        data: @Html.Raw(Json.Serialize(Model.TicketsByCategory.Data)),
-                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
-                    }]
+                    labels: @Html.Raw(Json.Serialize(Model.ChamadosPorMes.Labels)),
+                    datasets: [
+                        { label: 'Em Aberto', data: @Html.Raw(Json.Serialize(Model.ChamadosPorMes.EmAbertoData)), backgroundColor: '#ffc107', order: 2 },
+                        { label: 'Resolvidos', data: @Html.Raw(Json.Serialize(Model.ChamadosPorMes.ResolvidosData)), backgroundColor: '#198754', order: 1 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } } },
+                    plugins: { legend: { position: 'bottom', align: 'start' } }
                 }
             });
 
-            // Gráfico de Status (Gráfico de Barras)
-            var statusCtx = document.getElementById('statusChart').getContext('2d');
-            new Chart(statusCtx, {
-                type: 'bar',
+            var categoryCtx = document.getElementById('categoryDonutChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'doughnut',
                 data: {
-                    labels: @Html.Raw(Json.Serialize(Model.TicketsByStatus.Labels)),
+                    labels: @Html.Raw(Json.Serialize(Model.DistribuicaoPorCategoria.Labels)),
                     datasets: [{
-                        label: 'Total de Chamados',
-                        data: @Html.Raw(Json.Serialize(Model.TicketsByStatus.Data)),
-                        backgroundColor: '#4e73df'
+                        data: @Html.Raw(Json.Serialize(Model.DistribuicaoPorCategoria.Data)),
+                        backgroundColor: [ '#4e73df', '#198754', '#36b9cc', '#f6c23e', '#e74a3b' ],
+                        hoverOffset: 4
                     }]
                 },
                 options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
+                    responsive: true, maintainAspectRatio: false, cutout: '70%',
+                    plugins: { legend: { position: 'right' } }
                 }
             });
+
+            
+            // --- Gráfico da Aba "Por Categoria" (Carrega ao clicar) ---
+
+            let priorityChartInstance = null;
+            const priorityTab = document.getElementById('por-categoria-tab');
+
+            priorityTab.addEventListener('shown.bs.tab', function (event) {
+                if (priorityChartInstance === null) {
+                    var priorityCtx = document.getElementById('priorityChart').getContext('2d');
+                    priorityChartInstance = new Chart(priorityCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: @Html.Raw(Json.Serialize(Model.ChamadosPorPrioridade.Labels)),
+                            datasets: [{
+                                label: 'Total de Chamados',
+                                data: @Html.Raw(Json.Serialize(Model.ChamadosPorPrioridade.Data)),
+                                backgroundColor: '#198754'
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                            scales: { x: { beginAtZero: true, ticks: { precision: 0 } }, y: { grid: { display: false } } },
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+            });
+
         });
     </script>
 }

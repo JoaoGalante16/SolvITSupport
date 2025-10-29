@@ -1,0 +1,64 @@
+﻿/*
+ * CSS para a página de Relatórios (reports.css)
+ */
+
+/* Estilos dos Cartões de KPI (os 4 no topo) */
+.kpi-card .card-body {
+    position: relative;
+}
+
+.kpi-card .kpi-icon {
+    font-size: 1.5rem;
+    color: #198754; /* Verde do seu tema */
+    opacity: 0.2;
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+}
+
+/* Estilo da lista de Problemas Mais Comuns */
+#problemasComunsList .list-group-item {
+    border: none;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#problemasComunsList .progress {
+    height: 6px;
+    margin-top: 8px;
+    background-color: #e9ecef;
+}
+
+#problemasComunsList .progress-bar {
+    background-color: #198754; /* Verde do seu tema */
+}
+
+/* Deixa as abas desativadas com aparência de "não clicável" */
+.nav-tabs .nav-link.disabled {
+    color: #adb5bd;
+    background-color: transparent;
+    border-color: transparent;
+    cursor: not-allowed;
+}
+
+/* ... (todo o seu CSS anterior: .kpi-card, .progress-bar, etc) ... */
+
+/* (NOVO) Estilo para a lista de Detalhamento por Categoria */
+.category-detail-list .list-group-item {
+    border: none;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.category-detail-list .category-bar-container {
+    height: 10px;
+    width: 100%;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.category-detail-list .category-bar {
+    height: 100%;
+    border-radius: 5px;
+}
