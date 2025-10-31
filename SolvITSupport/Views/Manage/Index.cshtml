@@ -1,22 +1,137 @@
-﻿@model SolvITSupport.Models.IndexViewModel
+﻿@model SettingsViewModel
+@using SolvITSupport.Models
+
 @{
-    ViewData["Title"] = "Gerir Conta";
-    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Configurações";
+    ViewData["ActivePage"] = "Configuracoes"; // Para o menu lateral
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml"; // Garante o layout correto
 }
 
-<h1>@ViewData["Title"]</h1>
+<h4>@ViewData["Title"]</h4>
+<p>Gerencie suas preferências e configurações do sistema</p>
 
-<div>
-    <h4>Altere as configurações da sua conta</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Utilizador</dt>
-        <dd class="col-sm-10">@Model.Username</dd>
-        <dt class="col-sm-2">Nome</dt>
-        <dd class="col-sm-10">@Model.NomeCompleto</dd>
-        <dt class="col-sm-2">Telefone</dt>
-        <dd class="col-sm-10">@Model.Telefone</dd>
-    </dl>
+<ul class="nav nav-tabs mt-4" id="settingsTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link @(Model.ActiveTab == "Perfil" ? "active" : "")" id="perfil-tab" data-bs-toggle="tab" data-bs-target="#perfil-tab-pane" type="button" role="tab" aria-controls="perfil-tab-pane" aria-selected="true">
+            <i class="bi bi-person"></i> Perfil
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link @(Model.ActiveTab == "Seguranca" ? "active" : "")" id="seguranca-tab" data-bs-toggle="tab" data-bs-target="#seguranca-tab-pane" type="button" role="tab" aria-controls="seguranca-tab-pane" aria-selected="false">
+            <i class="bi bi-shield-lock"></i> Segurança
+        </button>
+    </li>
+</ul>
 
-    <a class="btn btn-primary" asp-action="ChangePassword">Alterar Senha</a>
+<div class="tab-content" id="settingsTabsContent">
+
+    <div class="tab-pane fade @(Model.ActiveTab == "Perfil" ? "show active" : "")" id="perfil-tab-pane" role="tabpanel" aria-labelledby="perfil-tab" tabindex="0">
+        <div class="card shadow-sm border-0 mt-3">
+            <div class="card-body p-4">
+
+                <form asp-controller="Manage" asp-action="EditProfile" method="post" enctype="multipart/form-data">
+
+                    <partial name="_StatusMessage" model="Model.Profile.StatusMessage" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <h5>Informações Pessoais</h5>
+                    <p class="text-muted small">Atualize suas informações de perfil.</p>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <img class="rounded-circle me-3"
+                             src="@(string.IsNullOrEmpty(Model.Profile.ProfilePictureUrl) ? "/img/avatar-default.png" : Model.Profile.ProfilePictureUrl)"
+                             alt="Foto de Perfil"
+                             style="width: 80px; height: 80px; object-fit: cover;">
+                        <div>
+                            <label asp-for="Profile.ProfilePictureFile" class="form-label mb-0"></label>
+                            <input asp-for="Profile.ProfilePictureFile" class="form-control form-control-sm" type="file" />
+                            <small class="form-text text-muted">JPG, PNG ou GIF. Máximo 2MB.</small>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="mb-3">
+                        <label asp-for="Profile.NomeCompleto" class="form-label"></label>
+                        <input asp-for="Profile.NomeCompleto" class="form-control" />
+                        <span asp-validation-for="Profile.NomeCompleto" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Profile.Email" class="form-label"></label>
+                        <input asp-for="Profile.Email" class="form-control" disabled readonly />
+                        <small class="form-text text-muted">O e-mail é usado como nome de utilizador e não pode ser alterado.</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Profile.Telefone" class="form-label"></label>
+                            <input asp-for="Profile.Telefone" class="form-control" />
+                            <span asp-validation-for="Profile.Telefone" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Profile.Departamento" class="form-label"></label>
+                            <input asp-for="Profile.Departamento" class="form-control" />
+                            <span asp-validation-for="Profile.Departamento" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Profile.Bio" class="form-label"></label>
+                        <textarea asp-for="Profile.Bio" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Profile.Bio" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-end">
+                        <button id="update-profile-button" type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade @(Model.ActiveTab == "Seguranca" ? "show active" : "")" id="seguranca-tab-pane" role="tabpanel" aria-labelledby="seguranca-tab" tabindex="0">
+        <div class="card shadow-sm border-0 mt-3">
+            <div class="card-body p-4">
+
+                <form asp-controller="Manage" asp-action="ChangePassword" method="post">
+
+                    <partial name="_StatusMessage" model="Model.Security.StatusMessage" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <h5>Segurança da Conta</h5>
+                    <p class="text-muted small">Gerencie suas preferências de segurança.</p>
+                    <hr>
+
+                    <h6>Alterar Senha</h6>
+                    <div class="mb-3">
+                        <label asp-for="Security.OldPassword" class="form-label"></label>
+                        <input asp-for="Security.OldPassword" class="form-control" autocomplete="current-password" aria-required="true" />
+                        <span asp-validation-for="Security.OldPassword" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Security.NewPassword" class="form-label"></label>
+                        <input asp-for="Security.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" />
+                        <span asp-validation-for="Security.NewPassword" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Security.ConfirmPassword" class="form-label"></label>
+                        <input asp-for="Security.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
+                        <span asp-validation-for="Security.ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Atualizar Senha</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
