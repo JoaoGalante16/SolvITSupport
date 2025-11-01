@@ -29,6 +29,8 @@ namespace SolvITSupport.Models
 
         [Display(Name = "Ativo")]
         public bool Ativo { get; set; } = true;
+        [Display(Name = "É Status Final?")]
+        public bool IsFinalStatus { get; set; }
 
         // Relacionamentos
         public virtual ICollection<Ticket> Chamados { get; set; } = new List<Ticket>();

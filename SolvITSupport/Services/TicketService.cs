@@ -111,27 +111,53 @@ namespace SolvITSupport.Services
 
             if (ticket != null && ticket.StatusId != newStatusId)
             {
-                var newStatus = await _context.Statuses.AsNoTracking().FirstOrDefaultAsync(s => s.Id == newStatusId);
-                if (newStatus == null) return;
+                // Busca o NOVO status (incluindo a propriedade IsFinalStatus)
+                var newStatus = await _context.Statuses
+                                                .AsNoTracking()
+                                                .FirstOrDefaultAsync(s => s.Id == newStatusId);
 
-                string oldStatusName = ticket.Status?.Nome ?? "N/A";
-
-                // 1. Atualiza o ticket
-                ticket.StatusId = newStatusId;
-                ticket.DataAtualizacao = DateTime.Now;
-
-                // 2. Adiciona o log
-                var update = new TicketUpdate
+                if (newStatus != null)
                 {
-                    UsuarioId = userId,
-                    Conteudo = $"Status alterado de '{oldStatusName}' para '{newStatus.Nome}'.",
-                    DataCriacao = DateTime.Now
-                };
-                ticket.Atualizacoes.Add(update); // Assume que Ticket.Atualizacoes é carregado ou inicializado
+                    string oldStatusName = ticket.Status?.Nome ?? "N/A";
 
-                // 3. Salva as alterações
-                _context.Entry(ticket).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
+                    // --- INÍCIO DA LÓGICA CORRIGIDA ---
+
+                    // 1. Atualiza o StatusId
+                    ticket.StatusId = newStatusId;
+                    ticket.DataAtualizacao = System.DateTime.Now;
+
+                    // 2. Verifica se o NOVO status é um status final (ex: Resolvido)
+                    //    (Esta é a propriedade que acabámos de adicionar)
+                    if (newStatus.IsFinalStatus)
+                    {
+                        // Se for final, define a Data de Resolução (que o seu ReportService usa)
+                        if (!ticket.DataResolucao.HasValue)
+                        {
+                            ticket.DataResolucao = System.DateTime.Now;
+                        }
+                    }
+                    else
+                    {
+                        // Se NÃO for final (ex: reabriu o ticket), limpa a Data de Resolução
+                        ticket.DataResolucao = null;
+                    }
+                    // --- FIM DA LÓGICA CORRIGIDA ---
+
+                    // 3. Cria e adiciona a atualização (log)
+                    var update = new TicketUpdate
+                    {
+                        TicketId = ticket.Id,
+                        UsuarioId = userId,
+                        Conteudo = $"Status alterado de '{oldStatusName}' para '{newStatus.Nome}'.",
+                        DataCriacao = System.DateTime.Now
+                    };
+
+                    _context.TicketUpdates.Add(update);
+
+                    // 4. Salva as alterações
+                    _context.Entry(ticket).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                }
             }
         }
 

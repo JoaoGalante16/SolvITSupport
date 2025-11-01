@@ -47,7 +47,7 @@ namespace SolvITSupport.Data
             }
             if (!context.Statuses.Any())
             {
-                context.Statuses.AddRange(new Status { Nome = "Aberto" }, new Status { Nome = "Em Andamento" }, new Status { Nome = "Resolvido" });
+                context.Statuses.AddRange(new Status { Nome = "Aberto", IsFinalStatus = false }, new Status { Nome = "Em Andamento", IsFinalStatus = false }, new Status { Nome = "Resolvido", IsFinalStatus = true});
             }
 
             await context.SaveChangesAsync();
