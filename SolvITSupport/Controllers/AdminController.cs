@@ -186,5 +186,63 @@ namespace SolvITSupport.Controllers
 
             return RedirectToAction(nameof(Users));
         }
+
+        public IActionResult Create()
+        {
+            var model = new CreateUserViewModel
+            {
+                // Busca todos os perfis (Roles) e transforma-os numa lista para a dropdown
+                AvailableRoles = _roleManager.Roles
+                    .Select(r => new SelectListItem { Value = r.Name, Text = r.Name })
+                    .ToList()
+            };
+            return View(model);
+        }
+
+        // POST: Admin/Create
+        // Processa o formulário preenchido
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // 1. Cria o objeto ApplicationUser com os dados do modelo
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    NomeCompleto = model.NomeCompleto,
+                    CPF = model.CPF,
+                    Cargo = model.Cargo
+                    // Outros campos do ApplicationUser podem ser preenchidos aqui
+                };
+
+                // 2. Tenta criar o utilizador na base de dados com a password fornecida
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    // 3. Se a criação for bem-sucedida, atribui o perfil (Role) selecionado
+                    await _userManager.AddToRoleAsync(user, model.RoleName);
+
+                    TempData["StatusMessage"] = $"Utilizador '{user.Email}' criado com sucesso.";
+                    return RedirectToAction(nameof(Users)); // Redireciona para a lista de utilizadores
+                }
+
+                // Se a criação falhar (ex: email já existe), adiciona os erros ao ModelState
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            // Se o ModelState for inválido (ou a criação falhar),
+            // recarrega a lista de perfis e mostra o formulário novamente
+            model.AvailableRoles = _roleManager.Roles
+                .Select(r => new SelectListItem { Value = r.Name, Text = r.Name })
+                .ToList();
+            return View(model);
+        }
     }
 }
