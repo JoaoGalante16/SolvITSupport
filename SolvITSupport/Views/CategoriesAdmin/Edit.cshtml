@@ -1,12 +1,12 @@
 ﻿@model SolvITSupport.Models.Category
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar";
 }
 
-<h1>Edit</h1>
+<h1>Editar</h1>
 
-<h4>Category</h4>
+<h4>Categoria</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -22,37 +22,16 @@
                 <label asp-for="Descricao" class="control-label"></label>
                 <input asp-for="Descricao" class="form-control" />
                 <span asp-validation-for="Descricao" class="text-danger"></span>
-            </div>
+            </div> <br />           
             <div class="form-group">
-                <label asp-for="Icone" class="control-label"></label>
-                <input asp-for="Icone" class="form-control" />
-                <span asp-validation-for="Icone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cor" class="control-label"></label>
-                <input asp-for="Cor" class="form-control" />
-                <span asp-validation-for="Cor" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ordem" class="control-label"></label>
-                <input asp-for="Ordem" class="form-control" />
-                <span asp-validation-for="Ordem" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Ativo" /> @Html.DisplayNameFor(model => model.Ativo)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Salvar" class="btn btn-primary" />
+                | <a asp-action="Index" class="btn btn-secondary">Voltar para a Lista</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
