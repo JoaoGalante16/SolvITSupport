@@ -93,24 +93,28 @@
                 </ul>
             </div>
         }
-        <div class="details-card mt-4">
-            <div class="card-header">Ações</div>
-            <div class="d-grid gap-2 col-6 mx-auto mb-4">
+        @if (User.IsInRole("Atendente") || User.IsInRole("Administrador"))
+        {
+            <div class="details-card mt-4">
+                <div class="card-header">Ações</div>
+                <div class="d-grid gap-2 col-6 mx-auto mb-4">
+                    <br />
 
-                <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#statusModal">
-                    <i class="bi bi-gear"></i> Status: @Model.Ticket.Status.Nome
-                </button>
+                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#statusModal">
+                        <i class="bi bi-gear"></i> Status: @Model.Ticket.Status.Nome
+                    </button>
 
-                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#priorityModal">
-                    <i class="bi bi-exclamation-circle"></i> Prioridade: @Model.Ticket.Prioridade.Nome
-                </button>
+                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#priorityModal">
+                        <i class="bi bi-exclamation-circle"></i> Prioridade: @Model.Ticket.Prioridade.Nome
+                    </button>
 
-                <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#assigneeModal">
-                    <i class="bi bi-person-fill"></i> Atendente: @(Model.Ticket.Atendente?.NomeCompleto ?? "Não Atribuído")
-                </button>
+                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#assigneeModal">
+                        <i class="bi bi-person-fill"></i> Atendente: @(Model.Ticket.Atendente?.NomeCompleto ?? "Não Atribuído")
+                    </button>
 
+                </div>
             </div>
-        </div>
+        }
     </div>
 </div>
 
