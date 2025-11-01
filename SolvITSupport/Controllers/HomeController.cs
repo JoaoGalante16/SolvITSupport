@@ -52,7 +52,7 @@ namespace SolvITSupport.Controllers
                     filteredTickets = allTickets.Where(t => t.Status.Nome == "Em Andamento");
                     break;
                 case "Resolvidos":
-                    filteredTickets = allTickets.Where(t => t.Status.Tipo == "Resolvido");
+                    filteredTickets = allTickets.Where(t => t.Status.Nome == "Resolvido");
                     break;
                 default: // "Todos"
                     filteredTickets = allTickets;
@@ -66,7 +66,7 @@ namespace SolvITSupport.Controllers
                 TotalTickets = allTickets.Count(),
                 OpenTickets = allTickets.Count(t => t.Status.Nome == "Aberto"),
                 InProgressTickets = allTickets.Count(t => t.Status.Nome == "Em Andamento"),
-                ResolvedTickets = allTickets.Count(t => t.Status.Tipo == "Resolvido"),
+                ResolvedTickets = allTickets.Count(t => t.Status.Nome == "Resolvido"),
                 RecentTickets = filteredTickets.OrderByDescending(t => t.DataCriacao).Take(10)
             };
 

@@ -10,7 +10,7 @@
         <p>Visualize e gerencie todos os seus chamados de suporte</p>
     </div>
     <div>
-        <a asp-controller="Tickets" asp-action="Create" class="btn btn-primary">Novo Chamado</a>
+        <a asp-controller="Tickets" asp-action="Create" class="btn btn-primary">Abri Novo Chamado</a>
     </div>
 </div>
 
@@ -36,7 +36,7 @@
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="stats-card h-100">
             <div class="stats-card-title">RESOLVIDOS</div>
-            <div class="stats-card-value text-success">@Model.Tickets.Count(t => t.Status.Tipo == "Resolvido")</div>
+            <div class="stats-card-value text-success">@Model.Tickets.Count(t => t.Status.Nome == "Resolvido")</div>
         </div>
     </div>
 </div>

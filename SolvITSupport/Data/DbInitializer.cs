@@ -39,7 +39,7 @@ namespace SolvITSupport.Data
             // --- CRIAÇÃO DE CATEGORIAS, PRIORIDADES E STATUS (AGORA INDEPENDENTE) ---
             if (!context.Categories.Any())
             {
-                context.Categories.AddRange(new Category { Nome = "Hardware" }, new Category { Nome = "Software" }, new Category { Nome = "Rede" });
+                context.Categories.AddRange(new Category { Nome = "Hardware" }, new Category { Nome = "Software" }, new Category { Nome = "Rede" }, new Category { Nome = "Acesso" }, new Category { Nome = "Outro" });
             }
             if (!context.Priorities.Any())
             {
@@ -47,7 +47,7 @@ namespace SolvITSupport.Data
             }
             if (!context.Statuses.Any())
             {
-                context.Statuses.AddRange(new Status { Nome = "Aberto" }, new Status { Nome = "Em Andamento" }, new Status { Nome = "Fechado" });
+                context.Statuses.AddRange(new Status { Nome = "Aberto" }, new Status { Nome = "Em Andamento" }, new Status { Nome = "Resolvido" });
             }
 
             await context.SaveChangesAsync();

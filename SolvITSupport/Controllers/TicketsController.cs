@@ -2,12 +2,10 @@
 using Microsoft.AspNetCore.Identity; // <-- ADICIONE ESTA LINHA
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SolvITSupport.Data;
 using SolvITSupport.Models;
 using SolvITSupport.Services;
-using System.Linq;
 [Authorize]
 public class TicketsController : Controller
 {
