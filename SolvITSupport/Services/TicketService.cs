@@ -103,7 +103,104 @@ namespace SolvITSupport.Services
             }
         }
 
-     
-   
+        public async Task ChangeStatusAsync(int ticketId, string userId, int newStatusId)
+        {
+            var ticket = await _context.Tickets
+                                    .Include(t => t.Status)
+                                    .FirstOrDefaultAsync(t => t.Id == ticketId);
+
+            if (ticket != null && ticket.StatusId != newStatusId)
+            {
+                var newStatus = await _context.Statuses.AsNoTracking().FirstOrDefaultAsync(s => s.Id == newStatusId);
+                if (newStatus == null) return;
+
+                string oldStatusName = ticket.Status?.Nome ?? "N/A";
+
+                // 1. Atualiza o ticket
+                ticket.StatusId = newStatusId;
+                ticket.DataAtualizacao = DateTime.Now;
+
+                // 2. Adiciona o log
+                var update = new TicketUpdate
+                {
+                    UsuarioId = userId,
+                    Conteudo = $"Status alterado de '{oldStatusName}' para '{newStatus.Nome}'.",
+                    DataCriacao = DateTime.Now
+                };
+                ticket.Atualizacoes.Add(update); // Assume que Ticket.Atualizacoes é carregado ou inicializado
+
+                // 3. Salva as alterações
+                _context.Entry(ticket).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task ChangePriorityAsync(int ticketId, string userId, int newPriorityId)
+        {
+            var ticket = await _context.Tickets
+                                    .Include(t => t.Prioridade)
+                                    .FirstOrDefaultAsync(t => t.Id == ticketId);
+
+            if (ticket != null && ticket.PrioridadeId != newPriorityId)
+            {
+                var newPriority = await _context.Priorities.AsNoTracking().FirstOrDefaultAsync(p => p.Id == newPriorityId);
+                if (newPriority == null) return;
+
+                string oldPriorityName = ticket.Prioridade?.Nome ?? "N/A";
+
+                // 1. Atualiza o ticket
+                ticket.PrioridadeId = newPriorityId;
+                ticket.DataAtualizacao = DateTime.Now;
+
+                // 2. Adiciona o log
+                var update = new TicketUpdate
+                {
+                    UsuarioId = userId,
+                    Conteudo = $"Prioridade alterada de '{oldPriorityName}' para '{newPriority.Nome}'.",
+                    DataCriacao = DateTime.Now
+                };
+                ticket.Atualizacoes.Add(update);
+
+                // 3. Salva as alterações
+                _context.Entry(ticket).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task ChangeAssigneeAsync(int ticketId, string actingUserId, string newAssigneeId)
+        {
+            var ticket = await _context.Tickets
+                                    .Include(t => t.Atendente) // O Atendente é um ApplicationUser
+                                    .FirstOrDefaultAsync(t => t.Id == ticketId);
+
+            if (ticket != null && ticket.AtendenteId != newAssigneeId)
+            {
+                // Busca o NOVO Atendente para o log
+                var newAssignee = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == newAssigneeId);
+                // Permite atribuir a 'null' (desatribuir)
+                if (newAssigneeId != null && newAssignee == null) return;
+
+                string oldAssigneeName = ticket.Atendente?.NomeCompleto ?? "Ninguém";
+                string newAssigneeName = newAssignee?.NomeCompleto ?? "Ninguém";
+
+                // 1. Atualiza o ticket
+                ticket.AtendenteId = newAssigneeId;
+                ticket.DataAtualizacao = DateTime.Now;
+
+                // 2. Adiciona o log
+                var update = new TicketUpdate
+                {
+                    UsuarioId = actingUserId, // Usuário logado que está fazendo a mudança
+                    Conteudo = $"Atribuído de '{oldAssigneeName}' para '{newAssigneeName}'.",
+                    DataCriacao = DateTime.Now
+                };
+                ticket.Atualizacoes.Add(update);
+
+                // 3. Salva as alterações
+                _context.Entry(ticket).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

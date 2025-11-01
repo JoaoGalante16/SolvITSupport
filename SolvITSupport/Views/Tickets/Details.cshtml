@@ -95,13 +95,119 @@
         }
         <div class="details-card mt-4">
             <div class="card-header">Ações</div>
-            <div class="card-body d-grid gap-2">
-                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#assignModal" data-ticket-id="@Model.Ticket.Id">Atribuir Chamado</button>
-                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#statusModal" data-ticket-id="@Model.Ticket.Id">Alterar Status</button>
-                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#priorityModal" data-ticket-id="@Model.Ticket.Id">Alterar Prioridade</button>
+            <div class="d-grid gap-2 col-6 mx-auto mb-4">
+
+                <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#statusModal">
+                    <i class="bi bi-gear"></i> Status: @Model.Ticket.Status.Nome
+                </button>
+
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#priorityModal">
+                    <i class="bi bi-exclamation-circle"></i> Prioridade: @Model.Ticket.Prioridade.Nome
+                </button>
+
+                <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#assigneeModal">
+                    <i class="bi bi-person-fill"></i> Atendente: @(Model.Ticket.Atendente?.NomeCompleto ?? "Não Atribuído")
+                </button>
+
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="Tickets" asp-action="ChangeStatus" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Alterar Status do Ticket TK-@Model.Ticket.Id</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
+                <div class="modal-body">
+                    <input type="hidden" name="ticketId" value="@Model.Ticket.Id" />
+
+                    <div class="mb-3">
+                        <label for="newStatusId" class="form-label">Selecione o novo Status:</label>
+
+                        <select name="newStatusId"
+                                id="newStatusId"
+                                class="form-select"
+                                asp-items="@ViewBag.Statuses">
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="priorityModal" tabindex="-1" aria-labelledby="priorityModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="Tickets" asp-action="ChangePriority" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="priorityModalLabel">Alterar Prioridade do Ticket TK-@Model.Ticket.Id</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="ticketId" value="@Model.Ticket.Id" />
+
+                    <div class="mb-3">
+                        <label for="newPriorityId" class="form-label">Selecione a nova Prioridade:</label>
+
+                        <select name="newPriorityId"
+                                id="newPriorityId"
+                                class="form-select"
+                                asp-items="@ViewBag.Priorities">
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Prioridade</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="assigneeModal" tabindex="-1" aria-labelledby="assigneeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="Tickets" asp-action="ChangeAssignee" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assigneeModalLabel">Atribuir Ticket TK-@Model.Ticket.Id</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="ticketId" value="@Model.Ticket.Id" />
+
+                    <div class="mb-3">
+                        <label for="newAssigneeId" class="form-label">Atribuir a:</label>
+
+                        <select name="newAssigneeId"
+                                id="newAssigneeId"
+                                class="form-select"
+                                asp-items="@ViewBag.Assignees">
+                            <option value="">-- Nenhum Atendente --</option>
+                        </select>
+                    </div>
+                    <p class="text-muted small">Você pode atribuir este chamado a qualquer outro Atendente ou Administrador.</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Atribuir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

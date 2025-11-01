@@ -13,6 +13,9 @@ namespace SolvITSupport.Services
         Task DeleteTicketAsync(int id);
         Task<IEnumerable<Ticket>> GetTicketsByUserAsync(string userId);
         Task AddUpdateAsync(int ticketId, string userId, string content);
+        Task ChangeStatusAsync(int ticketId, string userId, int newStatusId);
+        Task ChangePriorityAsync(int ticketId, string userId, int newPriorityId);
+        Task ChangeAssigneeAsync(int ticketId, string actingUserId, string newAssigneeId);
 
     }
 }

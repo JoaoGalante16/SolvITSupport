@@ -305,11 +305,33 @@ public class TicketsController : Controller
             return NotFound();
         }
 
-        // Criamos o nosso novo ViewModel
+        // --- PREPARAÇÃO DOS DADOS PARA OS MODAIS ---
+
+        // 1. STATUS
+        ViewBag.Statuses = new SelectList(await _statusService.GetAllAsync(), "Id", "Nome", ticket.StatusId);
+
+        // 2. PRIORIDADES
+        ViewBag.Priorities = new SelectList(await _priorityService.GetAllAsync(), "Id", "Nome", ticket.PrioridadeId);
+
+        // 3. ATENDENTES (Assumimos que só usuários com a Role 'Atendente' podem ser atribuídos)
+        var allUsers = await _userManager.GetUsersInRoleAsync("Atendente");
+        var assignees = allUsers.Select(u => new
+        {
+            u.Id,
+            Nome = u.NomeCompleto // Use FullName do ApplicationUser ou u.Email
+        }).OrderBy(u => u.Nome).ToList();
+
+        // Adiciona uma opção de "Não Atribuído" para desatribuir o chamado
+        assignees.Insert(0, new { Id = (string)null, Nome = "Não Atribuído" });
+
+        ViewBag.Assignees = new SelectList(assignees, "Id", "Nome", ticket.AtendenteId);
+
+
+        // Criação do ViewModel (continua igual)
         var viewModel = new TicketDetailsViewModel
         {
             Ticket = ticket,
-            Updates = ticket.Atualizacoes.OrderBy(u => u.DataCriacao) // Mostra as atualizações por ordem cronológica
+            Updates = ticket.Atualizacoes.OrderBy(u => u.DataCriacao)
         };
 
         return View(viewModel);
@@ -332,6 +354,43 @@ public class TicketsController : Controller
     }
 
     // Adicione estes dois métodos dentro da sua classe TicketsController
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Atendente, Administrador")]
+    public async Task<IActionResult> ChangeStatus(int ticketId, int newStatusId)
+    {
+        if (newStatusId > 0)
+        {
+            var userId = _userManager.GetUserId(User);
+            await _ticketService.ChangeStatusAsync(ticketId, userId, newStatusId);
+        }
+        return RedirectToAction("Details", new { id = ticketId });
+    }
 
-  
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Atendente, Administrador")]
+    public async Task<IActionResult> ChangePriority(int ticketId, int newPriorityId)
+    {
+        if (newPriorityId > 0)
+        {
+            var userId = _userManager.GetUserId(User);
+            await _ticketService.ChangePriorityAsync(ticketId, userId, newPriorityId);
+        }
+        return RedirectToAction("Details", new { id = ticketId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Atendente, Administrador")]
+    public async Task<IActionResult> ChangeAssignee(int ticketId, string newAssigneeId)
+    {
+        // Se newAssigneeId for uma string vazia, o TicketService irá tratar como "Desatribuído" (null)
+        // Se for um ID válido, atribui
+        var userId = _userManager.GetUserId(User);
+        await _ticketService.ChangeAssigneeAsync(ticketId, userId, newAssigneeId);
+
+        return RedirectToAction("Details", new { id = ticketId });
+    }
+
 }
