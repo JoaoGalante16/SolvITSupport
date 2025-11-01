@@ -2,9 +2,13 @@
 	ViewData["Title"] = "Painel de Administração";
 	Layout = "_DashboardLayout";
 }
-<h1>@ViewData["Title"]</h1>
-<p>Bem-vindo à área de gestão do sistema.</p>
-<hr />
+
+<div class="page-header-title">
+    <h1>Configurações do Sistema</h1>
+    <p>Bem-vindo à área de gestão do sistema.</p>
+</div>
+
+
 
 <div class="list-group">
     <a asp-action="Users" class="list-group-item list-group-item-action">Gerir Utilizadores</a>
