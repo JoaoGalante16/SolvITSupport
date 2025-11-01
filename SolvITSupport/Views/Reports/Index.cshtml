@@ -49,7 +49,7 @@
                 <span class="text-muted">Chamados Totais</span>
                 <i class="fas fa-ticket-alt kpi-icon"></i>
                 <h2 class="fw-bold my-2">@Model.KpiChamadosTotais</h2>
-                <small class="text-success">+2.5% em relação ao período anterior</small>
+                
             </div>
         </div>
     </div>
@@ -59,7 +59,7 @@
                 <span class="text-muted">Taxa de Resolução</span>
                 <i class="fas fa-check-circle kpi-icon"></i>
                 <h2 class="fw-bold my-2">@Model.KpiTaxaResolucao%</h2>
-                <small class="text-danger">-1.2% em relação ao período anterior</small>
+                
             </div>
         </div>
     </div>
@@ -69,20 +69,19 @@
                 <span class="text-muted">Tempo Médio de Resposta</span>
                 <i class="fas fa-clock kpi-icon"></i>
                 <h2 class="fw-bold my-2">@Model.KpiTempoMedioRespostaHoras.ToString("F1")h</h2>
-                <small class="text-success">+0.5h em relação ao período anterior</small>
+                
             </div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6">
         <div class="card shadow-sm border-0 h-100 kpi-card">
             <div class="card-body">
-                <span class="text-muted">Satisfação do Cliente</span>
-                <i class="fas fa-star kpi-icon"></i>
-                <h2 class="fw-bold my-2">@Model.KpiSatisfacaoCliente.ToString("F1")/5.0</h2>
-                <small class="text-success">+0.1 em relação ao período anterior</small>
+                <span class="text-muted">Tempo Médio de Resolução (h)</span>
+                <i class="fas fa-tachometer-alt kpi-icon"></i>
+                <h2 class="fw-bold my-2">@Model.KpiTempoMedioResolucaoHoras h</h2>               
             </div>
         </div>
-    </div>
+    </div>                                          
 </div>
 
 <ul class="nav nav-tabs mb-4" id="reportTabs" role="tablist">

@@ -81,8 +81,10 @@ namespace SolvITSupport.Services
 
         public async Task AddUpdateAsync(int ticketId, string userId, string content)
         {
+            // 1. Busca o ticket
             var ticket = await _context.Tickets
-                                    .Include(t => t.Atualizacoes) // Incluímos as atualizações
+                                    .Include(t => t.Solicitante) // Precisamos do Solicitante
+                                    .Include(t => t.Atualizacoes)
                                     .FirstOrDefaultAsync(t => t.Id == ticketId);
 
             if (ticket != null)
@@ -94,11 +96,21 @@ namespace SolvITSupport.Services
                     DataCriacao = DateTime.Now
                 };
 
-                // Adicionamos a nova atualização diretamente à lista do ticket
+                // 2. Adiciona a nova atualização
                 ticket.Atualizacoes.Add(update);
                 ticket.DataAtualizacao = DateTime.Now;
 
-                // Salvamos as alterações no contexto
+                // --- INÍCIO DA NOVA LÓGICA ---
+                // 3. Verifica se a primeira resposta já foi dada E se quem está a
+                //    responder NÃO é o próprio solicitante
+                if (!ticket.DataPrimeiraResposta.HasValue && ticket.SolicitanteId != userId)
+                {
+                    // Define a Data da Primeira Resposta
+                    ticket.DataPrimeiraResposta = DateTime.Now;
+                }
+                // --- FIM DA NOVA LÓGICA ---
+
+                // 4. Salvamos as alterações no contexto
                 await _context.SaveChangesAsync();
             }
         }

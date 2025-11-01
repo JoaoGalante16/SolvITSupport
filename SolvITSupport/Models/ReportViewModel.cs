@@ -37,7 +37,7 @@ namespace SolvITSupport.Models
         public int KpiChamadosTotais { get; set; }
         public double KpiTaxaResolucao { get; set; }
         public double KpiTempoMedioRespostaHoras { get; set; }
-        public double KpiSatisfacaoCliente { get; set; }
+        public double KpiTempoMedioResolucaoHoras { get; set; }
         public MonthlyChartData ChamadosPorMes { get; set; }
         public ChartData DistribuicaoPorCategoria { get; set; }
         public List<ProblemaComumViewModel> ProblemasMaisComuns { get; set; }

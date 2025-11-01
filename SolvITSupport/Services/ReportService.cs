@@ -26,17 +26,36 @@ namespace SolvITSupport.Services
             var allTickets = await _context.Tickets
                 .Include(t => t.Categoria)
                 .Include(t => t.Prioridade)
+                .Include(t => t.Status) // Incluir o Status
                 .Where(t => t.DataCriacao >= dataFiltro)
                 .ToListAsync();
 
             // --- 1. CÁLCULO DOS KPIs (Visão Geral) ---
             int kpiTotalTickets = allTickets.Count;
-            int totalResolvidos = allTickets.Count(t => t.DataResolucao.HasValue);
-            double kpiTaxaResolucao = (kpiTotalTickets > 0) ? ((double)totalResolvidos / kpiTotalTickets) * 100 : 0;
+
+            // Tempo Médio de Resposta (Já funcional com a alteração do TicketService)
             var ticketsComPrimeiraResposta = allTickets.Where(t => t.DataPrimeiraResposta.HasValue).ToList();
             double kpiTempoMedioHoras = (ticketsComPrimeiraResposta.Any()) ? ticketsComPrimeiraResposta.Average(t => (t.DataPrimeiraResposta.Value - t.DataCriacao).TotalHours) : 0;
-            var ticketsAvaliados = allTickets.Where(t => t.AvaliacaoNota.HasValue).ToList();
-            double kpiSatisfacao = (ticketsAvaliados.Any()) ? ticketsAvaliados.Average(t => t.AvaliacaoNota.Value) : 0;
+
+            // --- INÍCIO DA LÓGICA MODIFICADA ---
+
+            // Busca apenas tickets resolvidos (que têm DataResolucao)
+            var ticketsResolvidos = allTickets.Where(t => t.DataResolucao.HasValue).ToList();
+
+            // Calcula o KPI de Taxa de Resolução
+            int totalResolvidos = ticketsResolvidos.Count;
+            double kpiTaxaResolucao = (kpiTotalTickets > 0) ? ((double)totalResolvidos / kpiTotalTickets) * 100 : 0;
+
+            // Calcula o KPI de Tempo Médio de Resolução
+            double kpiTempoMedioResolucaoHoras = 0;
+            if (ticketsResolvidos.Any())
+            {
+                // Média do tempo (em horas) entre a Resolução e a Criação
+                kpiTempoMedioResolucaoHoras = ticketsResolvidos.Average(t => (t.DataResolucao.Value - t.DataCriacao).TotalHours);
+            }
+
+            // --- FIM DA LÓGICA MODIFICADA ---
+
 
             // --- 2. GRÁFICO 1: CHAMADOS POR MÊS (Visão Geral) ---
             var monthlyChart = new MonthlyChartData();
@@ -45,8 +64,10 @@ namespace SolvITSupport.Services
                 var mesAtual = DateTime.Now.AddMonths(-i);
                 monthlyChart.Labels.Add(mesAtual.ToString("MMM"));
                 var ticketsDoMes = allTickets.Where(t => t.DataCriacao.Month == mesAtual.Month && t.DataCriacao.Year == mesAtual.Year).ToList();
-                monthlyChart.EmAbertoData.Add(ticketsDoMes.Count(t => !t.DataResolucao.HasValue));
-                monthlyChart.ResolvidosData.Add(ticketsDoMes.Count(t => t.DataResolucao.HasValue));
+
+                // Corrigido para usar Status em vez de DataResolucao (para ser consistente com o Dashboard)
+                monthlyChart.EmAbertoData.Add(ticketsDoMes.Count(t => t.Status != null && t.Status.IsFinalStatus == false));
+                monthlyChart.ResolvidosData.Add(ticketsDoMes.Count(t => t.Status != null && t.Status.IsFinalStatus == true));
             }
 
             // --- 3. GRÁFICO 2: DISTRIBUIÇÃO POR CATEGORIA (Visão Geral) ---
@@ -76,7 +97,10 @@ namespace SolvITSupport.Services
                 KpiChamadosTotais = kpiTotalTickets,
                 KpiTaxaResolucao = Math.Round(kpiTaxaResolucao, 1),
                 KpiTempoMedioRespostaHoras = Math.Round(kpiTempoMedioHoras, 1),
-                KpiSatisfacaoCliente = Math.Round(kpiSatisfacao, 1),
+
+                // LINHA MODIFICADA:
+                KpiTempoMedioResolucaoHoras = Math.Round(kpiTempoMedioResolucaoHoras, 1),
+
                 ChamadosPorMes = monthlyChart,
                 DistribuicaoPorCategoria = categoryChart,
                 ProblemasMaisComuns = problemasComuns,
