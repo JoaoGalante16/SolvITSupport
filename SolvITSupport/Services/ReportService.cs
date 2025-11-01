@@ -4,6 +4,7 @@ using SolvITSupport.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SolvITSupport.Services
@@ -98,6 +99,44 @@ namespace SolvITSupport.Services
                 "outros" => "#198754",
                 _ => "#6c757d"
             };
+        }
+
+        public async Task<string> GenerateTicketsCsvAsync()
+        {
+            // 1. Buscar todos os tickets com os dados relacionados
+            var tickets = await _context.Tickets
+                .Include(t => t.Categoria)
+                .Include(t => t.Prioridade)
+                .Include(t => t.Status)
+                .Include(t => t.Solicitante)
+                .Include(t => t.Atendente)
+                .OrderByDescending(t => t.DataCriacao)
+                .ToListAsync();
+
+            // 2. Usar StringBuilder para construir o ficheiro CSV
+            var builder = new StringBuilder();
+
+            // 3. Adicionar o Cabeçalho (Header)
+            builder.AppendLine("TicketID;Titulo;Status;Categoria;Prioridade;Solicitante;Atendente;DataCriacao;DataResolucao");
+
+            // 4. Adicionar os dados de cada ticket
+            foreach (var t in tickets)
+            {
+                builder.AppendLine(
+                    $"\"TK-{t.Id}\";" +
+                    $"\"{t.Titulo.Replace("\"", "\"\"")}\";" + // Trata aspas dentro do texto
+                    $"\"{t.Status?.Nome}\";" +
+                    $"\"{t.Categoria?.Nome}\";" +
+                    $"\"{t.Prioridade?.Nome}\";" +
+                    $"\"{t.Solicitante?.NomeCompleto}\";" +
+                    $"\"{t.Atendente?.NomeCompleto ?? "N/A"}\";" +
+                    $"\"{t.DataCriacao:yyyy-MM-dd HH:mm}\";" +
+                    $"\"{t.DataResolucao?.ToString("yyyy-MM-dd HH:mm") ?? "N/A"}\""
+                );
+            }
+
+            // 5. Retornar a string completa
+            return builder.ToString();
         }
     }
 }

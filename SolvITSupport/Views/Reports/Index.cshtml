@@ -14,33 +14,29 @@
         <h1>Relatórios</h1>
         <p>Visualize métricas e estatísticas do sistema de suporte.</p>
     </div>
-    <a href="#" class="btn btn-success" style="background-color: #198754; border-color: #198754;">
-        <i class="fas fa-download me-2"></i> Exportar Relatório
+    <a asp-action="Export" asp-controller="Reports" class="btn btn-primary">
+        <i class="bi bi-download me-2"></i> Exportar
     </a>
 </div>
 
 <div class="card shadow-sm mb-4 border-0">
     <div class="card-body d-flex flex-wrap gap-3">
         <div class="flex-grow-1" style="min-width: 150px;">
-            <label for="periodo" class="form-label small text-muted">Período</label>
-            <select id="periodo" class="form-select">
-                <option selected>Últimos 90 dias</option>
-                <option>Últimos 30 dias</option>
-                <option>Últimos 7 dias</option>
+            <label for="Categoria" class="form-label small text-muted">Categorias</label>
+            <select id="Categoria" class="form-select">
+                <option selected>Todas categorias</option>                
             </select>
         </div>
         <div class="flex-grow-1" style="min-width: 150px;">
             <label for="tipo" class="form-label small text-muted">Tipo de Relatório</label>
             <select id="tipo" class="form-select">
                 <option selected>Geral</option>
-                <option>Por Equipe</option>
             </select>
         </div>
         <div class="flex-grow-1" style="min-width: 150px;">
             <label for="formato" class="form-label small text-muted">Formato de Exportação</label>
             <select id="formato" class="form-select">
-                <option selected>PDF</option>
-                <option>Excel (CSV)</option>
+                <option selected>Excel (CSV)</option>
             </select>
         </div>
     </div>
