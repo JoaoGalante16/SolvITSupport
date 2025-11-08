@@ -33,7 +33,6 @@
                     <div class="form-group mt-3">
                         <div class="d-flex justify-content-between">
                             <label asp-for="Input.Password" class="form-label">Senha</label>
-                            <a id="forgot-password" asp-page="./ForgotPassword" class="forgot-password-link">Esqueceu a senha?</a>
                         </div>
                         <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="" />
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
