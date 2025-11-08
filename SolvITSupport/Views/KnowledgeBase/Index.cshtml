@@ -113,7 +113,6 @@
 
                         <div class="d-flex align-items.center text-muted small">
                             <span class="me-4"><i class="far fa-eye me-1"></i> @item.Visualizacoes visualizações</span>
-                            <span class="me-4"><i class="far fa-thumbs-up me-1"></i> @item.VotosUteis acharam útil</span>
                             <span><i class="far fa-clock me-1"></i> Atualizado em @item.DataAtualizacao.ToString("dd/MM/yyyy")</span>
                         </div>
                     </div>
@@ -133,10 +132,6 @@
                     <div class="col-md-4">
                         <h2 class="fw-bold text-primary">@Model.TotalViews.ToString("N0")</h2>
                         <p class="text-muted">Total de Visualizações</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h2 class="fw-bold text-info">@Model.ResolutionRate%</h2>
-                        <p class="text-muted">Taxa de resolução</p>
                     </div>
                 </div>
             </div>

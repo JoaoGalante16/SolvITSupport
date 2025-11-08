@@ -31,14 +31,7 @@ namespace SolvITSupport.Data
                 await userManager.CreateAsync(atendente, "Atendente@123");
                 await userManager.AddToRoleAsync(atendente, "Atendente");
 
-                var usuario2 = new ApplicationUser
-                {
-                    UserName = "maria.joao@solvit.com", // <-- Deve ser este email
-                    Email = "maria.joao@solvit.com", // <-- E este email
-                    NomeCompleto = "Maria João",
-                    EmailConfirmed = true,
-                    Ativo = true
-                };
+                var usuario2 = new ApplicationUser{UserName = "maria.joao@solvit.com", Email = "maria.joao@solvit.com", NomeCompleto = "Maria João", EmailConfirmed = true, Ativo = true};
                 await userManager.CreateAsync(usuario2, "Usuario@123");
                 await userManager.AddToRoleAsync(usuario2, "Usuario"); ;
 
@@ -95,7 +88,6 @@ namespace SolvITSupport.Data
                 var carlosUser = await userManager.FindByEmailAsync("carlos.silva@solvit.com");
                 var miguelUser = await userManager.FindByEmailAsync("miguel.costa@solvit.com");
                 var lauraUser = await userManager.FindByEmailAsync("laura.gomes@solvit.com");
-                if (lauraUser == null) throw new Exception("DEBUG: O utilizador 'laura.gomes@solvit.com' não foi encontrado. Verifique o bloco 'if (!context.Users.Any())'.");
 
                 // --- FIM DA SECÇÃO DE DEBUG ---
 

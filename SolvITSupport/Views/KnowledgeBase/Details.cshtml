@@ -17,13 +17,6 @@
                     <i class="bi bi-clock"></i>
                     Atualizado em @Model.DataAtualizacao.ToShortDateString()
                 </span>
-                @* A referência tinha "Views", mas seu Model não. 
-                   Se um dia você adicionar, pode descomentar aqui.
-                <span class="ms-3">
-                    <i class="bi bi-eye"></i>
-                    1523 visualizações
-                </span>
-                *@
             </div>
         </div>
     </div>
@@ -34,37 +27,10 @@
 
             <div class="kb-card">
                 <div class="kb-card-header">
-                    <span class="badge bg-secondary-subtle text-secondary-emphasis">@Model.Categoria</span>
-
-                    @* A referência tinha "Tags", mas seu Model não. 
-                       Se um dia você adicionar, pode fazer um loop aqui.
-                    *@
-
-                    <div class="kb-actions">
-                        <button class="btn btn-light btn-sm" onclick="alert('Função Compartilhar não implementada')">
-                            <i class="bi bi-share"></i>
-                        </button>
-                        <button class="btn btn-light btn-sm" onclick="window.print()">
-                            <i class="bi bi-printer"></i>
-                        </button>
-                    </div>
+                    <span class="badge bg-secondary-subtle text-secondary-emphasis">@Model.Categoria</span>          
                 </div>
                 <div class="kb-card-body article-content">
                     @Html.Raw(Model.Conteudo)
-                </div>
-            </div>
-
-            <div class="kb-card">
-                <div class="kb-card-body">
-                    <h5 class="fw-bold">Este artigo foi útil?</h5>
-                    <div class="kb-feedback">
-                        <button class="btn btn-outline-success">
-                            <i class="bi bi-hand-thumbs-up"></i> Sim (0)
-                        </button>
-                        <button class="btn btn-outline-danger">
-                            <i class="bi bi-hand-thumbs-down"></i> Não (0)
-                        </button>
-                    </div>
                 </div>
             </div>
 
