@@ -36,8 +36,16 @@ public class TicketsController : Controller
 
 
     // Substitua o seu método Index() por este
-    public async Task<IActionResult> Index(int? categoryIdFilter, int? priorityIdFilter, int? statusIdFilter, string searchString)
+    public async Task<IActionResult> Index(
+        int? categoryIdFilter,
+        int? priorityIdFilter,
+        int? statusIdFilter,
+        string searchString,
+        int? pageNumber) // <-- ADICIONA O PARÂMETRO DA PÁGINA
     {
+        // Define o tamanho da página
+        int pageSize = 10;
+
         // Vai buscar todos os chamados que o utilizador tem permissão para ver
         IQueryable<Ticket> ticketsQuery;
         var currentUserId = _userManager.GetUserId(User);
@@ -51,15 +59,11 @@ public class TicketsController : Controller
             ticketsQuery = _context.Tickets.Where(t => t.SolicitanteId == currentUserId);
         }
 
-        // --- INÍCIO DA CORREÇÃO ---
         // Aplica o filtro de pesquisa de texto, se existir
         if (!string.IsNullOrEmpty(searchString))
         {
-            // Pesquisa no Título E também no Código (convertendo o ID para string no lado do C# primeiro)
             ticketsQuery = ticketsQuery.Where(t => t.Titulo.Contains(searchString) || ("TK-" + t.Id.ToString()).Contains(searchString));
         }
-        // --- FIM DA CORREÇÃO ---
-
 
         // Aplica os filtros dos dropdowns, se existirem
         if (categoryIdFilter.HasValue)
@@ -75,22 +79,57 @@ public class TicketsController : Controller
             ticketsQuery = ticketsQuery.Where(t => t.StatusId == statusIdFilter.Value);
         }
 
-        // Executa a consulta na base de dados
-        var filteredTickets = await ticketsQuery
+        // --- INÍCIO DA LÓGICA DE ESTATÍSTICA ---
+        // Calcula as estatísticas ANTES de aplicar a paginação
+        // (Inclui o Status para poder filtrar por t.Status.Nome)
+        var queryWithStatus = ticketsQuery.Include(t => t.Status);
+
+        int totalCount = await queryWithStatus.CountAsync();
+        int openCount = await queryWithStatus.CountAsync(t => t.Status.Nome == "Aberto");
+        int inProgressCount = await queryWithStatus.CountAsync(t => t.Status.Nome == "Em Andamento");
+        int resolvedCount = await queryWithStatus.CountAsync(t => t.Status.Nome == "Resolvido");
+        // --- FIM DA LÓGICA DE ESTATÍSTICA ---
+
+
+        // Prepara a query final com Includes e Ordenação
+        var orderedQuery = queryWithStatus
             .Include(t => t.Categoria)
             .Include(t => t.Prioridade)
-            .Include(t => t.Status)
-            .OrderByDescending(t => t.DataCriacao)
-            .ToListAsync();
+            //.Include(t => t.Status) // Já incluído acima
+            .OrderByDescending(t => t.DataCriacao);
+
+        // --- INÍCIO DA LÓGICA DE PAGINAÇÃO ---
+        // Cria a lista paginada
+        // (pageNumber ?? 1) significa que se pageNumber for nulo, usa a página 1
+        var paginatedTickets = await PaginatedList<Ticket>.CreateAsync(
+            orderedQuery.AsNoTracking(), // AsNoTracking() melhora a performance em listas
+            pageNumber ?? 1,
+            pageSize);
+        // --- FIM DA LÓGICA DE PAGINAÇÃO ---
+
 
         // (O resto do seu código para criar o ViewModel continua igual...)
         var viewModel = new TicketIndexViewModel
         {
-            Tickets = filteredTickets,
+            // Dados da página
+            Tickets = paginatedTickets,
+
+            // Dados das estatísticas
+            TotalCount = totalCount,
+            OpenCount = openCount,
+            InProgressCount = inProgressCount,
+            ResolvedCount = resolvedCount,
+
+            // Dados para os dropdowns
             Categories = new SelectList(await _categoryService.GetAllAsync(), "Id", "Nome", categoryIdFilter),
             Priorities = new SelectList(await _priorityService.GetAllAsync(), "Id", "Nome", priorityIdFilter),
             Statuses = new SelectList(await _statusService.GetAllAsync(), "Id", "Nome", statusIdFilter),
-            SearchString = searchString
+
+            // Dados para manter os filtros nos links de paginação
+            SearchString = searchString,
+            CategoryIdFilter = categoryIdFilter,
+            PriorityIdFilter = priorityIdFilter,
+            StatusIdFilter = statusIdFilter
         };
 
         return View(viewModel);

@@ -18,28 +18,29 @@
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="stats-card h-100">
             <div class="stats-card-title">TOTAL</div>
-            <div class="stats-card-value">@Model.Tickets.Count()</div>
+            <div class="stats-card-value">@Model.TotalCount</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="stats-card h-100">
             <div class="stats-card-title">ABERTOS</div>
-            <div class="stats-card-value text-warning">@Model.Tickets.Count(t => t.Status.Nome == "Aberto")</div>
+            <div class="stats-card-value text-warning">@Model.OpenCount</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="stats-card h-100">
             <div class="stats-card-title">EM ANDAMENTO</div>
-            <div class="stats-card-value text-info">@Model.Tickets.Count(t => t.Status.Nome == "Em Andamento")</div>
+            <div class="stats-card-value text-info">@Model.InProgressCount</div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="stats-card h-100">
             <div class="stats-card-title">RESOLVIDOS</div>
-            <div class="stats-card-value text-success">@Model.Tickets.Count(t => t.Status.Nome == "Resolvido")</div>
+            <div class="stats-card-value text-success">@Model.ResolvedCount</div>
         </div>
     </div>
 </div>
+
 <div class="card shadow mb-4">
     <div class="card-header">
         <h6 class="m-0 font-weight-bold">Filtros e Pesquisa</h6>
@@ -136,8 +137,43 @@
             </tbody>
         </table>
     </div>
+
     <div class="pagination-footer">
-        <span>Mostrando @Model.Tickets.Count() chamados</span>
+        <span>
+            Mostrando @Model.Tickets.Count() de @Model.Tickets.TotalCount chamados
+        </span>
+
+        <div class="pagination-controls">
+            @{
+                // Lógica para desabilitar os botões se estiver na primeira ou última página
+                var prevDisabled = !Model.Tickets.HasPreviousPage ? "disabled" : "";
+                var nextDisabled = !Model.Tickets.HasNextPage ? "disabled" : "";
+            }
+
+            <a asp-action="Index"
+               asp-route-pageNumber="@(Model.Tickets.PageIndex - 1)"
+               asp-route-searchString="@Model.SearchString"
+               asp-route-categoryIdFilter="@Model.CategoryIdFilter"
+               asp-route-priorityIdFilter="@Model.PriorityIdFilter"
+               asp-route-statusIdFilter="@Model.StatusIdFilter"
+               class="btn btn-sm btn-outline-secondary @prevDisabled">
+                &laquo; Anterior
+            </a>
+
+            <span class="pagination-info">
+                Página @Model.Tickets.PageIndex de @Model.Tickets.TotalPages
+            </span>
+
+            <a asp-action="Index"
+               asp-route-pageNumber="@(Model.Tickets.PageIndex + 1)"
+               asp-route-searchString="@Model.SearchString"
+               asp-route-categoryIdFilter="@Model.CategoryIdFilter"
+               asp-route-priorityIdFilter="@Model.PriorityIdFilter"
+               asp-route-statusIdFilter="@Model.StatusIdFilter"
+               class="btn btn-sm btn-outline-secondary @nextDisabled">
+                Próximo &raquo;
+            </a>
+        </div>
     </div>
 </div>
 

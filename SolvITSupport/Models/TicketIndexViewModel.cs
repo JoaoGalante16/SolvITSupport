@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
+using SolvITSupport.Models;
 
 namespace SolvITSupport.Models
 {
     public class TicketIndexViewModel
     {
         // A lista de chamados já filtrada
-        public IEnumerable<Ticket> Tickets { get; set; }
+        public PaginatedList<Ticket> Tickets { get; set; }
 
         // Opções para os menus dropdown de filtro
         public SelectList Categories { get; set; }
@@ -20,5 +20,10 @@ namespace SolvITSupport.Models
 
         // O texto da pesquisa
         public string SearchString { get; set; }
+
+        public int TotalCount { get; set; }
+        public int OpenCount { get; set; }
+        public int InProgressCount { get; set; }
+        public int ResolvedCount { get; set; }
     }
 }
