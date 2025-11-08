@@ -120,9 +120,7 @@
                 </div>
             </div>
         }
-    </div>
-
-    @if (string.IsNullOrEmpty(Model.CurrentSearchString) && string.IsNullOrEmpty(Model.CurrentCategoryName))
+    </div> @if (string.IsNullOrEmpty(Model.CurrentSearchString) && string.IsNullOrEmpty(Model.CurrentCategoryName))
     {
         <div class="card border-0 shadow-sm mt-5 bg-light">
             <div class="card-body p-4">
@@ -144,4 +142,38 @@
             </div>
         </div>
     }
-</div>
+
+    <div class="pagination-footer mt-4">
+        <span>
+            Mostrando @Model.Articles.Count() de @Model.Articles.TotalCount artigos
+        </span>
+
+        <div class="pagination-controls">
+            @{
+                var prevDisabled = !Model.Articles.HasPreviousPage ? "disabled" : "";
+                var nextDisabled = !Model.Articles.HasNextPage ? "disabled" : "";
+            }
+
+            <a asp-action="Index"
+               asp-route-pageNumber="@(Model.Articles.PageIndex - 1)"
+               asp-route-searchString="@Model.CurrentSearchString"
+               asp-route-categoryName="@Model.CurrentCategoryName"
+               class="btn btn-sm btn-outline-secondary @prevDisabled">
+                &laquo; Anterior
+            </a>
+
+            <span class="pagination-info">
+                Página @Model.Articles.PageIndex de @Model.Articles.TotalPages
+            </span>
+
+            <a asp-action="Index"
+               asp-route-pageNumber="@(Model.Articles.PageIndex + 1)"
+               asp-route-searchString="@Model.CurrentSearchString"
+               asp-route-categoryName="@Model.CurrentCategoryName"
+               class="btn btn-sm btn-outline-secondary @nextDisabled">
+                Próximo &raquo;
+            </a>
+        </div>
+    </div>
+
+</div> ```

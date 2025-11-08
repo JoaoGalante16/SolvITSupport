@@ -87,27 +87,13 @@ namespace SolvITSupport.Data
             if (!context.Tickets.Any())
             {
                 // --- SECÇÃO DE DEBUG: Vamos encontrar o utilizador que está a falhar ---
-                var anaUser = await userManager.FindByEmailAsync("ana.costa@solvit.com");
-                if (anaUser == null) throw new Exception("DEBUG: O utilizador 'ana.costa@solvit.com' não foi encontrado. Verifique o bloco 'if (!context.Users.Any())'.");
-
-                var mariaUser = await userManager.FindByEmailAsync("maria.joao@solvit.com");
-                if (mariaUser == null) throw new Exception("DEBUG: O utilizador 'maria.joao@solvit.com' não foi encontrado. Verifique o bloco 'if (!context.Users.Any())'.");
-
-                var ruiUser = await userManager.FindByEmailAsync("rui.pedro@solvit.com");
-                if (ruiUser == null) throw new Exception("DEBUG: O utilizador 'rui.pedro@solvit.com' não foi encontrado. Verifique o bloco 'if (!context.Users.Any())'.");
-
-                var diogoUser = await userManager.FindByEmailAsync("diogo.fernandes@solvit.com");
-                if (diogoUser == null) throw new Exception("DEBUG: O utilizador 'diogo.fernandes@solvit.com' não foi encontrado. Verifique o bloco 'if (!context.Users.Any())'.");
-
+                var anaUser = await userManager.FindByEmailAsync("ana.costa@solvit.com");             
+                var mariaUser = await userManager.FindByEmailAsync("maria.joao@solvit.com");               
+                var ruiUser = await userManager.FindByEmailAsync("rui.pedro@solvit.com");         
+                var diogoUser = await userManager.FindByEmailAsync("diogo.fernandes@solvit.com");         
                 var sofiaUser = await userManager.FindByEmailAsync("sofia.lopes@solvit.com");
-                if (sofiaUser == null) throw new Exception("DEBUG: O utilizador 'sofia.lopes@solvit.com' não foi encontrado. Verifique o bloco 'if (!context.Users.Any())'.");
-
                 var carlosUser = await userManager.FindByEmailAsync("carlos.silva@solvit.com");
-                if (carlosUser == null) throw new Exception("DEBUG: O utilizador 'carlos.silva@solvit.com' não foi encontrado. Verifique o bloco 'if (!context.Users.Any())'.");
-
                 var miguelUser = await userManager.FindByEmailAsync("miguel.costa@solvit.com");
-                if (miguelUser == null) throw new Exception("DEBUG: O utilizador 'miguel.costa@solvit.com' não foi encontrado. Verifique o bloco 'if (!context.Users.Any())'.");
-
                 var lauraUser = await userManager.FindByEmailAsync("laura.gomes@solvit.com");
                 if (lauraUser == null) throw new Exception("DEBUG: O utilizador 'laura.gomes@solvit.com' não foi encontrado. Verifique o bloco 'if (!context.Users.Any())'.");
 

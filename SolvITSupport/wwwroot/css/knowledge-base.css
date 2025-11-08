@@ -30,3 +30,23 @@
     background-color: #198754;
     color: white !important;
 }
+
+.pagination-footer {
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e3e6f0;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-info {
+    padding: 0 0.5rem;
+    font-size: 0.9rem;
+    color: #555;
+}

@@ -5,11 +5,15 @@ namespace SolvITSupport.Models
     // Este é o ViewModel principal da página
     public class KnowledgeBaseViewModel
     {
-        public List<KnowledgeBaseArticle> Articles { get; set; }
+        // --- MUDANÇA AQUI ---
+        // Troque 'List' por 'PaginatedList'
+        public PaginatedList<KnowledgeBaseArticle> Articles { get; set; }
+        // --- FIM DA MUDANÇA ---
+
         public List<Category> Categories { get; set; }
         public List<PopularTopicViewModel> PopularTopics { get; set; }
 
-        // Filtros atuais
+        // Filtros atuais (já existiam, ótimo)
         public string CurrentSearchString { get; set; }
         public string CurrentCategoryName { get; set; }
 
