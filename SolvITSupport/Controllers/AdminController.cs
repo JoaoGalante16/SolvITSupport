@@ -14,11 +14,13 @@ namespace SolvITSupport.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager; // Precisamos disto para gerir os papéis
+        private readonly ILogger<AdminController> _logger;
 
-        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<AdminController> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -57,6 +59,7 @@ namespace SolvITSupport.Controllers
         // --- INÍCIO DOS NOVOS MÉTODOS ---
 
         // GET: /Admin/Edit/GUID_DO_UTILIZADOR
+        [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null) return NotFound();
@@ -75,7 +78,8 @@ namespace SolvITSupport.Controllers
                 Cargo = user.Cargo,
                 Departamento = user.Departamento,
                 UserRoles = userRoles,
-                AllRoles = allRoles.Select(r => new SelectListItem { Text = r.Name, Value = r.Name }).ToList()
+                AllRoles = allRoles.Select(r => new SelectListItem { Text = r.Name, Value = r.Name }).ToList(),
+                StatusMessage = TempData["StatusMessage"] as string
             };
 
             return View(model);
@@ -243,6 +247,50 @@ namespace SolvITSupport.Controllers
                 .Select(r => new SelectListItem { Value = r.Name, Text = r.Name })
                 .ToList();
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")] // Garante que só Admins podem fazer isso
+        public async Task<IActionResult> ResetPassword(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound($"Não foi possível encontrar o usuário com ID '{id}'.");
+            }
+
+            // Defina sua senha padrão aqui.
+            // ELA DEVE ser forte o suficiente para as regras do Identity
+            string defaultPassword = "Senha123!";
+
+            // Este é o método mais seguro:
+            // 1. Gera um token de reset (como se o usuário tivesse pedido)
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            // 2. Reseta a senha usando o token gerado
+            var result = await _userManager.ResetPasswordAsync(user, token, defaultPassword);
+
+            if (result.Succeeded)
+            {
+                _logger.LogInformation($"Admin resetou a senha do usuário {user.UserName}.");
+                // Envia a mensagem de sucesso de volta para a página Edit
+                TempData["StatusMessage"] = $"Senha do usuário {user.UserName} resetada para: {defaultPassword}";
+            }
+            else
+            {
+                // Coleta os erros, caso haja
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                TempData["StatusMessage"] = $"Erro ao resetar senha: {errors}";
+            }
+
+            // Redireciona de volta para a página de Edição do mesmo usuário
+            return RedirectToAction("Edit", new { id = user.Id });
         }
     }
 }

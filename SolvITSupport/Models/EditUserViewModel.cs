@@ -24,7 +24,9 @@ namespace SolvITSupport.Models
         // Lista de papéis que o utilizador tem
         public IList<string> UserRoles { get; set; }
 
-        [ValidateNever] // <-- ADICIONE ESTA LINHA
+        [ValidateNever] 
         public List<SelectListItem> AllRoles { get; set; }
+
+        public string StatusMessage { get; set; }
     }
 }

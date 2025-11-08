@@ -9,7 +9,10 @@
 <h4>@Model.NomeCompleto</h4>
 <hr />
 
-<form asp-action="Edit">
+@await Html.PartialAsync("_StatusMessage", Model.StatusMessage)
+
+
+<form asp-action="Edit" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
 
@@ -49,6 +52,13 @@
 
     <div class="mt-3">
         <input type="submit" value="Salvar" class="btn btn-primary" />
+
+        <button type="submit"
+                class="btn btn-warning"
+                formaction="@Url.Action("ResetPassword", "Admin", new { id = Model.Id })"
+                onclick="return confirm('Tem certeza que deseja resetar a senha deste usuário para a senha padrão?');">
+            Resetar Senha
+        </button>
         <a asp-action="Users" class="btn btn-secondary">Cancelar</a>
     </div>
 </form>
