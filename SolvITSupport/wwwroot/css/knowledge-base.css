@@ -50,3 +50,152 @@
     font-size: 0.9rem;
     color: #555;
 }
+
+[código do: SolvITSupport/wwwroot/css/knowledge-base.css]
+/* --- ESTILOS DO ARTIGO (baseado na sua referência) --- */
+/* --- Layout da Página --- */
+.kb-article-page {
+    max-width: 1200px; /* Controla a largura máxima */
+    margin: auto;
+}
+
+/* --- Cabeçalho --- */
+.kb-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Espaço entre o botão de voltar e o título */
+    margin-bottom: 2rem;
+}
+
+.kb-title {
+    font-size: 2rem; /* 32px */
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.kb-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem; /* 14px */
+    color: #6c757d; /* text-muted do Bootstrap */
+}
+
+    .kb-meta i {
+        margin-right: 0.25rem;
+    }
+
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Botão redondo */
+}
+
+/* --- Grid Principal --- */
+.kb-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Padrão mobile: 1 coluna */
+    gap: 1.5rem; /* 24px */
+}
+
+/* Em telas maiores (ex: desktop) */
+@media (min-width: 992px) {
+    .kb-grid {
+        /* 2 colunas: 2/3 para o conteúdo, 1/3 para a sidebar */
+        /* É EXATAMENTE ISSO QUE FAZ O 60/40 (ou 2/3 e 1/3) */
+        grid-template-columns: 2fr 1fr;
+    }
+}
+}
+
+.kb-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.kb-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- O Componente "Card" --- */
+.kb-card {
+    background-color: #ffffff;
+    border: 1px solid #e3e6f0; /* Borda sutil */
+    border-radius: 0.5rem; /* 8px */
+    box-shadow: 0 .15rem 1.75rem 0 rgba(0,0,0,.05); /* Sombra leve */
+}
+
+.kb-card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e3e6f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.kb-card-body {
+    padding: 1.5rem;
+}
+
+.kb-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+
+/* --- Conteúdo do Artigo (dentro do card) --- */
+.article-content {
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #495057;
+}
+
+    .article-content h1,
+    .article-content h2,
+    .article-content h3,
+    .article-content h4,
+    .article-content h5 {
+        font-weight: 600;
+        color: #212529;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .article-content p {
+        margin-bottom: 1rem;
+    }
+
+    .article-content ul,
+    .article-content ol {
+        margin-bottom: 1rem;
+        padding-left: 2rem;
+    }
+
+    .article-content code {
+        background-color: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.875em;
+    }
+
+    .article-content pre {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto; /* Permite scroll horizontal para código */
+    }
+
+
+/* --- Feedback --- */
+.kb-feedback {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}

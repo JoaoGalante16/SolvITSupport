@@ -4,13 +4,89 @@
     Layout = "_DashboardLayout";
 }
 
-<h1>@Model.Titulo</h1>
-<p class="text-muted">Categoria: @Model.Categoria | Última atualização: @Model.DataAtualizacao.ToShortDateString()</p>
-<hr />
+<div classclass="kb-article-page">
 
-<div class="mt-4">
-    <pre style="white-space: pre-wrap; font-family: inherit; font-size: inherit;">@Model.Conteudo</pre>
+    <div class="kb-header">
+        <a asp-action="Index" class="btn btn-light btn-icon">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h1 class="kb-title">@Model.Titulo</h1>
+            <div class="kb-meta">
+                <span>
+                    <i class="bi bi-clock"></i>
+                    Atualizado em @Model.DataAtualizacao.ToShortDateString()
+                </span>
+                @* A referência tinha "Views", mas seu Model não. 
+                   Se um dia você adicionar, pode descomentar aqui.
+                <span class="ms-3">
+                    <i class="bi bi-eye"></i>
+                    1523 visualizações
+                </span>
+                *@
+            </div>
+        </div>
+    </div>
+
+    <div class="kb-grid">
+
+        <div class="kb-main-content">
+
+            <div class="kb-card">
+                <div class="kb-card-header">
+                    <span class="badge bg-secondary-subtle text-secondary-emphasis">@Model.Categoria</span>
+
+                    @* A referência tinha "Tags", mas seu Model não. 
+                       Se um dia você adicionar, pode fazer um loop aqui.
+                    *@
+
+                    <div class="kb-actions">
+                        <button class="btn btn-light btn-sm" onclick="alert('Função Compartilhar não implementada')">
+                            <i class="bi bi-share"></i>
+                        </button>
+                        <button class="btn btn-light btn-sm" onclick="window.print()">
+                            <i class="bi bi-printer"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="kb-card-body article-content">
+                    @Html.Raw(Model.Conteudo)
+                </div>
+            </div>
+
+            <div class="kb-card">
+                <div class="kb-card-body">
+                    <h5 class="fw-bold">Este artigo foi útil?</h5>
+                    <div class="kb-feedback">
+                        <button class="btn btn-outline-success">
+                            <i class="bi bi-hand-thumbs-up"></i> Sim (0)
+                        </button>
+                        <button class="btn btn-outline-danger">
+                            <i class="bi bi-hand-thumbs-down"></i> Não (0)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="kb-sidebar">
+
+            <div class="kb-card">
+                <div class="kb-card-body">
+                    <h5 class="fw-bold">Precisa de Mais Ajuda?</h5>
+                    <p class="text-muted small">
+                        Se este artigo não resolveu seu problema, você pode abrir um chamado com nossa equipe de suporte.
+                    </p>
+                    <a asp-controller="Tickets" asp-action="Create" class="btn btn-success w-100">
+                        Abrir Chamado
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 </div>
 
-<hr />
-<a asp-action="Index" class="btn btn-primary">Voltar para a Lista</a>
+<link rel="stylesheet" href="~/css/knowledge-base.css" asp-append-version="true" />
